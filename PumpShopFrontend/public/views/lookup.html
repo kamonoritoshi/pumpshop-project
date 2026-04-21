@@ -1,0 +1,74 @@
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="glass-card">
+            <div class="text-center mb-4">
+                <h1 class="title-gradient display-5">Tra Cứu Đơn Hàng</h1>
+                <p class="text-muted">Kiểm tra trạng thái đơn hàng của bạn nhanh chóng</p>
+            </div>
+
+            <form ng-submit="lookupOrder()">
+                <div class="mb-3 position-relative">
+                    <label class="form-label" for="orderId">Mã đơn hàng</label>
+                    <input type="number" id="orderId" class="form-control glass-input" ng-model="lookupData.id" placeholder="Nhập mã đơn hàng (VD: 102)" required>
+                    <i class="fa-solid fa-hashtag position-absolute" style="top:42px; left:15px; color:var(--text-muted)"></i>
+                    <style>#orderId { padding-left: 40px; }</style>
+                </div>
+
+                <div class="mb-4 position-relative">
+                    <label class="form-label" for="phone">Số điện thoại</label>
+                    <input type="tel" id="phone" class="form-control glass-input" ng-model="lookupData.phone" placeholder="Số điện thoại người nhận" required>
+                    <i class="fa-solid fa-phone position-absolute" style="top:42px; left:15px; color:var(--text-muted)"></i>
+                    <style>#phone { padding-left: 40px; }</style>
+                </div>
+
+                <button type="submit" class="btn-gradient w-100 py-3 rounded-3 fw-bold" ng-disabled="isLoading">
+                    <span ng-hide="isLoading">Tra Cứu Ngay</span>
+                    <div class="spinner ms-auto me-auto" ng-show="isLoading" style="display: block;"></div>
+                </button>
+            </form>
+
+            <div class="alert alert-danger mt-4" ng-show="errorMessage" style="background: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid var(--danger);">
+                <i class="fa-solid fa-circle-exclamation"></i> {{errorMessage}}
+            </div>
+
+            <div class="mt-4 pt-4 border-bottom" ng-show="orderResult">
+                <div class="d-flex justify-content-between align-items-center mb-4 p-3 rounded-3" style="background: rgba(255,255,255,0.03);">
+                    <div>
+                        <div class="text-muted" style="font-size:0.9rem;">Ngày đặt hàng</div>
+                        <div class="fw-bold">{{orderResult.orderDate | date:'dd/MM/yyyy HH:mm'}}</div>
+                    </div>
+                    <div>
+                        <span class="badge rounded-pill px-3 py-2" ng-class="{'bg-success text-white': orderResult.status === 'COMPLETED', 'bg-warning text-dark': orderResult.status !== 'COMPLETED'}">
+                            {{orderResult.status || 'PENDING'}}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="text-muted mb-1" style="font-size:0.9rem;">Địa chỉ nhận hàng</div>
+                    <div class="fw-medium lh-lg">
+                        {{orderResult.receiverName}} - {{orderResult.receiverPhone}}<br>
+                        {{orderResult.deliveryAddress}}
+                    </div>
+                </div>
+
+                <h5 class="border-bottom pb-2 mb-3">Sản phẩm đã đặt</h5>
+                <ul class="list-unstyled mb-4">
+                    <li class="d-flex align-items-center gap-3 py-3 border-bottom" ng-repeat="item in orderResult.orderDetails">
+                        <img ng-src="{{item.productImage || 'https://via.placeholder.com/60?text=No+Image'}}" alt="{{item.productName}}" style="width:60px; height:60px; object-fit:cover; border-radius:10px; background:#1e293b;">
+                        <div>
+                            <h6 class="mb-1">{{item.productName}}</h6>
+                            <p class="text-muted mb-0">{{item.price | number}} VNĐ x {{item.quantity}}</p>
+                        </div>
+                    </li>
+                    <li ng-if="!orderResult.orderDetails || orderResult.orderDetails.length === 0" class="text-muted">Không có sản phẩm nào.</li>
+                </ul>
+
+                <div class="d-flex justify-content-between align-items-center p-4 rounded-4 mt-4" style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.2);">
+                    <h5 class="mb-0">Tổng thanh toán</h5>
+                    <h3 class="mb-0 fw-bold" style="color: var(--accent);">{{orderResult.totalAmount | number}} VNĐ</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

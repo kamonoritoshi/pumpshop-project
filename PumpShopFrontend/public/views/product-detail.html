@@ -1,0 +1,116 @@
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-5 mb-4 mb-md-0">
+      <div class="glass-card sticky-top overflow-hidden p-0" style="top: 20px">
+        <div style="background: #fff; text-align: center; padding: 30px;">
+          <img
+            ng-src="{{product.image || 'https://picsum.photos/500/500'}}"
+            class="img-fluid"
+            alt="{{product.name}}"
+            style="max-height: 400px; object-fit: contain;"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="glass-card p-4 p-md-5">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent p-0 mb-3 border-0">
+            <li class="breadcrumb-item">
+              <a href="#!/" class="text-decoration-none text-muted">Trang chủ</a>
+            </li>
+            <li class="breadcrumb-item active text-white">
+              {{product.category.name || 'Máy bơm'}}
+            </li>
+          </ol>
+        </nav>
+
+        <h1 class="fw-bold title-gradient mb-3">{{product.name}}</h1>
+        <p class="text-muted small mb-4">
+          Mã sản phẩm: <span class="badge" style="background: rgba(255,255,255,0.1)">{{product.id}}</span> |
+          Thương hiệu: <strong style="color: var(--accent);">{{product.brand}}</strong>
+        </p>
+
+        <div class="d-flex align-items-center mb-4 pb-4 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
+          <h2 class="fw-bold mb-0 me-3" style="color: var(--accent); font-size: 2.2rem;">
+            {{product.price | number:0}} VNĐ
+          </h2>
+          <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; border: 1px solid #10b981;" ng-if="product.quantity > 0">
+            <i class="bi bi-check-circle"></i> Còn hàng
+          </span>
+          <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid var(--danger);" ng-if="product.quantity <= 0">
+            <i class="bi bi-x-circle"></i> Hết hàng
+          </span>
+        </div>
+
+        <div class="mb-5 rounded-3 p-4" style="background: rgba(56, 189, 248, 0.05); border-left: 4px solid var(--accent);">
+          <h6 class="fw-bold mb-2" style="color: var(--accent);">Mô tả sản phẩm:</h6>
+          <p class="mb-0 text-muted" style="font-style: italic; line-height: 1.6;">
+            {{product.description}}
+          </p>
+        </div>
+
+        <div class="specs-container mb-5">
+          <h4 class="pb-3 mb-4 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
+            <i class="bi bi-gear-fill" style="color: var(--accent);"></i> Thông số kỹ thuật chi tiết
+          </h4>
+
+          <div class="table-responsive">
+            <table class="table table-borderless align-middle" style="color: var(--text-main);">
+              <tbody>
+                <tr ng-if="product.headMax" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <td class="text-muted w-50 py-3">Cột áp tối đa (Head)</td>
+                  <td class="fw-medium py-3">{{product.headMax}} m</td>
+                </tr>
+                <tr ng-if="product.headStandard" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <td class="text-muted py-3">Cột áp định mức</td>
+                  <td class="fw-medium py-3">{{product.headStandard}} m</td>
+                </tr>
+                <tr ng-if="product.flowMax" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <td class="text-muted py-3">Lưu lượng tối đa (Flow)</td>
+                  <td class="fw-medium py-3">{{product.flowMax}} m³/h</td>
+                </tr>
+                <tr ng-if="product.flowStandard" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <td class="text-muted py-3">Lưu lượng định mức</td>
+                  <td class="fw-medium py-3">{{product.flowStandard}} m³/h</td>
+                </tr>
+                <tr ng-if="product.powerKw" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <td class="text-muted py-3">Công suất động cơ</td>
+                  <td class="fw-medium py-3">{{product.powerKw}} kW ({{product.powerHp}} HP)</td>
+                </tr>
+                <tr ng-if="product.voltage" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <td class="text-muted py-3">Điện áp</td>
+                  <td class="fw-medium py-3">
+                    {{product.voltage}} / {{product.phase}} Pha / {{product.frequency}}Hz
+                  </td>
+                </tr>
+                <tr ng-if="product.materialBody" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <td class="text-muted py-3">Vật liệu thân bơm</td>
+                  <td class="fw-medium py-3">{{product.materialBody}}</td>
+                </tr>
+                <tr ng-if="product.weight">
+                  <td class="text-muted py-3">Trọng lượng máy</td>
+                  <td class="fw-medium py-3">{{product.weight}} kg</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row gx-3">
+          <div class="col-10">
+            <button class="btn-gradient w-100 rounded-3 py-3 fw-bold fs-5" ng-click="addToCart(product)" ng-disabled="product.quantity <= 0">
+              <i class="bi bi-cart-plus me-2"></i> THÊM VÀO GIỎ HÀNG
+            </button>
+          </div>
+          <div class="col-2">
+            <button class="btn btn-outline-light w-100 rounded-3 h-100" style="border-color: rgba(255,255,255,0.2);">
+              <i class="bi bi-heart fs-4" style="color: var(--danger);"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

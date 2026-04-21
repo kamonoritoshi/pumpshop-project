@@ -1,0 +1,109 @@
+<div class="row justify-content-center py-4">
+    <div class="col-md-7">
+        <div class="glass-card p-5">
+            <div class="text-center mb-5">
+                <div style="background: linear-gradient(135deg, #10b981, #38bdf8); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <i class="bi bi-person-plus text-white" style="font-size: 2rem;"></i>
+                </div>
+                <h2 class="title-gradient fw-bold">Tạo tài khoản</h2>
+                <p class="text-muted">Đăng ký để trải nghiệm mua sắm tốt hơn</p>
+            </div>
+
+            <form ng-submit="register()" novalidate>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label" for="reg-username">Tên đăng nhập <span style="color:var(--danger)">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input type="text" id="reg-username" class="form-control glass-input border-0"
+                                   ng-model="form.username" placeholder="Tên đăng nhập" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label" for="reg-fullname">Họ và tên</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <input type="text" id="reg-fullname" class="form-control glass-input border-0"
+                                   ng-model="form.fullName" placeholder="Họ và tên đầy đủ">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label" for="reg-password">Mật khẩu <span style="color:var(--danger)">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input type="password" id="reg-password" class="form-control glass-input border-0"
+                                   ng-model="form.password" placeholder="Mật khẩu" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label" for="reg-confirm">Xác nhận mật khẩu <span style="color:var(--danger)">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                                <i class="bi bi-shield-lock"></i>
+                            </span>
+                            <input type="password" id="reg-confirm" class="form-control glass-input border-0"
+                                   ng-model="form.confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label" for="reg-email">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+                            <input type="email" id="reg-email" class="form-control glass-input border-0"
+                                   ng-model="form.email" placeholder="email@example.com">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label" for="reg-phone">Số điện thoại</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                                <i class="bi bi-telephone"></i>
+                            </span>
+                            <input type="tel" id="reg-phone" class="form-control glass-input border-0"
+                                   ng-model="form.phone" placeholder="0912345678">
+                        </div>
+                    </div>
+                    <div class="col-12 mb-4">
+                        <label class="form-label" for="reg-address">Địa chỉ</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                                <i class="bi bi-geo-alt"></i>
+                            </span>
+                            <input type="text" id="reg-address" class="form-control glass-input border-0"
+                                   ng-model="form.address" placeholder="Địa chỉ nhận hàng mặc định">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert border-0 mb-4" ng-show="errorMessage"
+                     style="background: rgba(239, 68, 68, 0.12); color: #fca5a5; border-left: 4px solid var(--danger) !important;">
+                    <i class="bi bi-exclamation-circle me-2"></i>{{errorMessage}}
+                </div>
+
+                <div class="alert border-0 mb-4" ng-show="successMessage"
+                     style="background: rgba(16, 185, 129, 0.12); color: #a7f3d0; border-left: 4px solid var(--success) !important;">
+                    <i class="bi bi-check-circle me-2"></i>{{successMessage}}
+                </div>
+
+                <button type="submit" class="btn-gradient w-100 py-3 rounded-3 fw-bold fs-6" ng-disabled="isLoading">
+                    <span ng-hide="isLoading"><i class="bi bi-person-check me-2"></i>Tạo tài khoản</span>
+                    <div ng-show="isLoading" class="spinner" style="display: block; margin: auto;"></div>
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-4 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                <p class="text-muted mb-0">Đã có tài khoản?
+                    <a href="#!/login" class="text-decoration-none fw-semibold" style="color: var(--accent);">Đăng nhập ngay</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

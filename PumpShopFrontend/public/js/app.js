@@ -57,7 +57,7 @@ app.factory("AuthService", function ($window) {
 });
 
 // ---- JWT Interceptor ----
-app.factory('AuthInterceptor', function (AuthService) {
+app.factory('AuthInterceptor', function (AuthService, $location, NotificationService, $q) {
   return {
     request: function (config) {
       var token = AuthService.getToken();
@@ -65,6 +65,14 @@ app.factory('AuthInterceptor', function (AuthService) {
         config.headers['Authorization'] = 'Bearer ' + token;
       }
       return config;
+    },
+    responseError: function (rejection) {
+      if (rejection.status === 401 || rejection.status === 403) {
+        AuthService.logout();
+        $location.path('/login');
+        NotificationService.show("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.", "warning");
+      }
+      return $q.reject(rejection);
     }
   };
 });
@@ -182,7 +190,33 @@ app.controller("DetailController", function ($scope, $http, $routeParams, $rootS
   $http.get("http://localhost:8080/api/v1/products/" + $routeParams.id).then(function (response) {
     $scope.product = response.data;
     $rootScope.product = response.data;
+    $scope.loadReviews();
   });
+
+  $scope.reviews = [];
+  $scope.reviewForm = { rating: 5, comment: '' };
+
+  $scope.loadReviews = function () {
+    $http.get("http://localhost:8080/api/v1/reviews/product/" + $routeParams.id).then(function (response) {
+      $scope.reviews = response.data;
+    });
+  };
+
+  $scope.sendReview = function () {
+    var reviewData = {
+      productId: $routeParams.id,
+      rating: $scope.reviewForm.rating,
+      comment: $scope.reviewForm.comment
+    };
+
+    $http.post("http://localhost:8080/api/v1/reviews", reviewData).then(function (response) {
+      NotificationService.show("Cảm ơn bạn đã đánh giá!");
+      $scope.reviewForm.comment = '';
+      $scope.loadReviews();
+    }).catch(function (error) {
+      NotificationService.show("Lỗi khi gửi đánh giá!", "danger");
+    });
+  };
 
   $scope.$on("$destroy", () => { $rootScope.product = null; });
 

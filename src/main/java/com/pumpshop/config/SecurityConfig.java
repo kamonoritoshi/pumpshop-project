@@ -31,16 +31,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configure(http))
+            .csrf(csrf -> csrf.disable()) // Fix 403 Forbidden for POST
+            .cors(cors -> cors.configure(http)) // Use bean from CorsConfig
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/orders/lookup").permitAll()
                 // Protected endpoints
+                .requestMatchers(HttpMethod.POST, "/api/v1/reviews/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/orders").authenticated()
                 .anyRequest().authenticated()
             )

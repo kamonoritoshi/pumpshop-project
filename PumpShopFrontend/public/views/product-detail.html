@@ -110,6 +110,53 @@
             </button>
           </div>
         </div>
+
+        <!-- Review Section -->
+        <div class="mt-5 pt-5 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+          <h4 class="fw-bold mb-4">
+            <i class="bi bi-chat-left-text-fill me-2" style="color: var(--accent);"></i> Đánh giá sản phẩm
+          </h4>
+
+          <!-- Review List -->
+          <div class="review-list mb-5">
+            <div ng-if="reviews.length == 0" class="text-muted italic">Chưa có đánh giá nào cho sản phẩm này.</div>
+            <div ng-repeat="review in reviews" class="mb-4 pb-4 border-bottom" style="border-color: rgba(255,255,255,0.05) !important;">
+              <div class="d-flex justify-content-between mb-2">
+                <strong class="text-white">{{review.user.fullName || review.user.username}}</strong>
+                <span class="text-muted small">{{review.createdAt | date:'dd/MM/yyyy HH:mm'}}</span>
+              </div>
+              <div class="mb-2">
+                <span ng-repeat="i in [1,2,3,4,5]" class="bi" ng-class="i <= review.rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'"></span>
+              </div>
+              <p class="text-muted mb-0">{{review.comment}}</p>
+            </div>
+          </div>
+
+          <!-- Review Form -->
+          <div ng-if="isLoggedIn" class="review-form p-4 rounded-3" style="background: rgba(255,255,255,0.03);">
+            <h5 class="mb-3 text-white">Viết đánh giá của bạn</h5>
+            <form ng-submit="sendReview()">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Số sao</label>
+                <select class="form-select bg-dark text-white border-secondary" ng-model="reviewForm.rating" required>
+                  <option value="5">5 sao - Rất tốt</option>
+                  <option value="4">4 sao - Tốt</option>
+                  <option value="3">3 sao - Bình thường</option>
+                  <option value="2">2 sao - Kém</option>
+                  <option value="1">1 sao - Rất kém</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Bình luận</label>
+                <textarea class="form-control bg-dark text-white border-secondary" rows="3" ng-model="reviewForm.comment" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary px-4">Gửi đánh giá</button>
+            </form>
+          </div>
+          <div ng-if="!isLoggedIn" class="alert alert-info border-0" style="background: rgba(13, 202, 240, 0.1); color: #0dcaf0;">
+            Vui lòng <a href="#!/login" class="fw-bold text-decoration-none" style="color: #0dcaf0;">đăng nhập</a> để gửi đánh giá.
+          </div>
+        </div>
       </div>
     </div>
   </div>

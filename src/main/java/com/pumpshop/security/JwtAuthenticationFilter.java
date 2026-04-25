@@ -28,9 +28,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println("Processing request: " + request.getMethod() + " " + request.getRequestURI());
+        System.out.println("Auth Header: " + request.getHeader("Authorization"));
+
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("Debug Filter: No valid Bearer token found.");
+            System.out.println("Debug Filter: Authentication in Context: " + SecurityContextHolder.getContext().getAuthentication());
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,17 +49,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 if (jwtUtil.isTokenValid(jwt, userDetails)) {
+                    System.out.println("Debug Filter: Token valid for user: " + username);
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    System.out.println("Debug Filter: Token is NOT valid.");
                 }
             }
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.out.println("JWT expired: " + e.getMessage());
         } catch (Exception e) {
-            // Token không hợp lệ - bỏ qua, request sẽ tiếp tục không có authentication
+            System.out.println("Debug Filter: Error occurred during token validation: " + e.getMessage());
         }
 
+        System.out.println("Debug Filter: Final Authentication in Context: " + SecurityContextHolder.getContext().getAuthentication());
         filterChain.doFilter(request, response);
     }
 }

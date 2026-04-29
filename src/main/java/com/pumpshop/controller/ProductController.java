@@ -25,7 +25,7 @@ public class ProductController {
 
 	@GetMapping("/categories")
 	public java.util.List<com.pumpshop.entity.Category> listCategories() {
-		return categoryRepository.findAll();
+		return categoryRepository.findRootCategories();
 	}
 
 	@GetMapping

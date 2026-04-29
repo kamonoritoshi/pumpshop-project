@@ -155,7 +155,16 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
     maxHead: null
   };
 
-  // Load categories for filter
+  $scope.expandedCategories = {};
+  $scope.toggleCategory = function(id, event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    $scope.expandedCategories[id] = !$scope.expandedCategories[id];
+  };
+
+  // Load root categories for filter tree
   $http.get("http://localhost:8080/api/v1/products/categories").then(res => {
     $scope.categories = res.data;
   }).catch(err => console.error("Lỗi lấy danh mục:", err));

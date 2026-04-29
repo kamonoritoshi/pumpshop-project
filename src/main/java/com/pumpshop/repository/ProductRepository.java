@@ -14,7 +14,7 @@ import com.pumpshop.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, String> {
 	@Query("SELECT p FROM Product p WHERE " +
 	       "(:kw IS NULL OR p.name LIKE %:kw% OR p.brand LIKE %:kw% OR p.description LIKE %:kw%) AND " +
-	       "(:categoryId IS NULL OR p.category.id = :categoryId) AND " +
+	       "(:categoryIds IS NULL OR p.category.id IN :categoryIds) AND " +
 	       "(:brand IS NULL OR p.brand = :brand) AND " +
 	       "(:minPower IS NULL OR p.powerKw >= :minPower) AND " +
 	       "(:maxPower IS NULL OR p.powerKw <= :maxPower) AND " +
@@ -22,7 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 	       "(:maxHead IS NULL OR p.headMax <= :maxHead)")
 	Page<Product> findWithFilters(
 			@Param("kw") String kw,
-			@Param("categoryId") Long categoryId,
+			@Param("categoryIds") List<Long> categoryIds,
 			@Param("brand") String brand,
 			@Param("minPower") Double minPower,
 			@Param("maxPower") Double maxPower,

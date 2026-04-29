@@ -246,3 +246,57 @@ body {
 .section-padding {
     padding: 4rem 0;
 }
+
+/* Multi-level Category Styles */
+.category-item {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 0 !important;
+}
+
+.category-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.category-item.active {
+    background: var(--accent-gradient) !important;
+    border-left: 4px solid #fff !important;
+}
+
+.sub-category-wrapper {
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(5px);
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    margin-left: 0.5rem;
+}
+
+.sub-category-item {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 0 !important;
+}
+
+.sub-category-item:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.sub-category-item.active {
+    color: var(--accent) !important;
+    font-weight: bold;
+    background: transparent !important;
+}
+
+.toggle-icon {
+    padding: 5px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.toggle-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.fs-small {
+    font-size: 0.75rem;
+}

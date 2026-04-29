@@ -27,12 +27,29 @@
                 <button class="list-group-item list-group-item-action list-group-item-glass active border-0 rounded-top" ng-click="setCategory(null)">
                     <i class="bi bi-grid"></i> Tất cả danh mục
                 </button>
-                <button class="list-group-item list-group-item-action list-group-item-glass border-0" 
-                        ng-repeat="c in categories" 
-                        ng-click="setCategory(c.id)"
-                        ng-class="{active: filterData.categoryId == c.id}">
-                    {{c.name}}
-                </button>
+                
+                <!-- Category Tree -->
+                <div ng-repeat="c in categories">
+                    <div class="list-group-item list-group-item-glass border-0 d-flex justify-content-between align-items-center category-item"
+                         ng-class="{active: filterData.categoryId == c.id}"
+                         ng-click="setCategory(c.id)">
+                        <span class="flex-grow-1">{{c.name}}</span>
+                        <i class="bi fs-small toggle-icon" 
+                           ng-class="expandedCategories[c.id] ? 'bi-chevron-down' : 'bi-chevron-right'"
+                           ng-if="c.children.length > 0"
+                           ng-click="toggleCategory(c.id, $event)"></i>
+                    </div>
+                    
+                    <!-- Sub Categories -->
+                    <div class="sub-category-wrapper" ng-if="c.children.length > 0 && expandedCategories[c.id]">
+                        <button class="list-group-item list-group-item-action list-group-item-glass border-0 ps-4 py-2 sub-category-item"
+                                ng-repeat="sub in c.children"
+                                ng-click="setCategory(sub.id)"
+                                ng-class="{active: filterData.categoryId == sub.id}">
+                            <i class="bi bi-arrow-return-right me-2 opacity-50"></i> {{sub.name}}
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="glass-card p-0 overflow-hidden">

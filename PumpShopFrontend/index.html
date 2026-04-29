@@ -18,55 +18,76 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body ng-app="pumpApp">
-    <nav class="navbar navbar-expand-lg navbar-dark glass-nav">
+    <header class="header-section border-bottom" style="background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(10px);">
+      <div class="container header-content">
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold title-gradient fs-3 me-0" href="#!/">
+          <i class="bi bi-gear-wide-connected"></i> PUMP SHOP
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-bar-wrapper d-none d-lg-block">
+          <div class="input-group">
+            <span class="input-group-text border-0 bg-dark text-muted" style="border-radius: 12px 0 0 12px;">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control glass-input border-0 py-2" placeholder="Tìm kiếm máy bơm, linh kiện..." 
+                   ng-model="kw" ng-keypress="($event.which === 13)?search():0" style="border-radius: 0 12px 12px 0 !important;">
+          </div>
+        </div>
+
+        <!-- Right Icons -->
+        <div class="d-flex align-items-center gap-4">
+          <a href="#!/cart" class="text-white text-decoration-none d-flex align-items-center gap-2 position-relative">
+            <div class="position-relative">
+              <i class="bi bi-cart3 fs-4"></i>
+              <span class="badge bg-danger rounded-pill position-absolute" style="top:-8px; right:-8px; font-size: 0.65rem;">{{cartCount}}</span>
+            </div>
+            <span class="d-none d-md-inline fw-medium">Giỏ hàng</span>
+          </a>
+
+          <!-- Auth Section -->
+          <div ng-if="!isLoggedIn" class="d-flex align-items-center gap-3">
+            <a href="#!/login" class="text-white text-decoration-none fw-medium">Đăng nhập</a>
+            <a href="#!/register" class="btn-gradient rounded-pill px-4 py-2 text-decoration-none fw-bold">Đăng ký</a>
+          </div>
+
+          <!-- User Dropdown -->
+          <div class="dropdown" ng-if="isLoggedIn">
+            <button class="btn btn-link text-white text-decoration-none dropdown-toggle p-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle fs-4"></i>
+              <span class="d-none d-md-inline">{{currentUser.fullName || currentUser.username}}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+              <li><span class="dropdown-item text-muted small">@{{currentUser.username}}</span></li>
+              <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></li>
+              <li>
+                <button class="dropdown-item text-danger" ng-click="logout()">
+                  <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent py-0">
       <div class="container">
-        <a class="navbar-brand fw-bold title-gradient" href="#!/">⚙ PUMP SHOP</a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-          <span class="navbar-toggler-icon"></span>
-        </button>
         <div class="collapse navbar-collapse" id="navMenu">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="#!/"><i class="bi bi-house"></i> Trang chủ</a>
+              <a class="nav-link py-3 px-0 me-4 active" href="#!/"><i class="bi bi-grid me-2"></i>Tất cả danh mục</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#!/lookup"><i class="bi bi-search"></i> Tra cứu đơn</a>
+              <a class="nav-link py-3 px-0 me-4" href="#!/"><i class="bi bi-house me-1"></i>Trang chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link py-3 px-0 me-4" href="#!/lookup"><i class="bi bi-search me-1"></i>Tra cứu đơn hàng</a>
             </li>
           </ul>
-
-          <div class="d-flex align-items-center gap-3">
-            <!-- Giỏ hàng -->
-            <a href="#!/cart" class="btn btn-outline-light rounded-3 position-relative" style="border-color: rgba(255,255,255,0.2);">
-              <i class="bi bi-cart3"></i>
-              <span class="badge bg-danger rounded-pill position-absolute" style="top:-6px; right:-6px;">{{cartCount}}</span>
-            </a>
-
-            <!-- Chưa đăng nhập -->
-            <div ng-if="!isLoggedIn" class="d-flex align-items-center gap-2">
-              <a href="#!/login" class="btn btn-outline-light rounded-3" style="border-color: rgba(255,255,255,0.2);">
-                <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
-              </a>
-              <a href="#!/register" class="btn-gradient rounded-3 px-3 py-2 text-decoration-none fw-semibold" style="font-size: 0.9rem;">
-                <i class="bi bi-person-plus me-1"></i>Đăng ký
-              </a>
-            </div>
-
-            <!-- Đã đăng nhập -->
-            <div class="dropdown" ng-if="isLoggedIn">
-              <button class="btn btn-outline-light rounded-3 dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                      style="border-color: rgba(255,255,255,0.2);">
-                <i class="bi bi-person-circle me-1"></i>{{currentUser.fullName || currentUser.username}}
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1);">
-                <li><span class="dropdown-item text-muted small">@{{currentUser.username}}</span></li>
-                <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></li>
-                <li>
-                  <button class="dropdown-item text-danger" ng-click="logout()">
-                    <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
-                  </button>
-                </li>
-              </ul>
-            </div>
+          <div class="text-white-50 small">
+            <i class="bi bi-telephone me-1"></i> Hotline: 1900 6789
           </div>
         </div>
       </div>

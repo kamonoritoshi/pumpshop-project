@@ -17,10 +17,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Page<Product> getProducts(int page, int size, String keyword) {
 		Pageable pageable = PageRequest.of(page, size);
-		if (keyword != null && !keyword.isEmpty()) {
-			return productRepository.findAllByNameOrBrand(keyword, pageable);
-		}
-		return productRepository.findAll(pageable);
+		return productRepository.findWithFilters(keyword, null, null, null, null, null, null, pageable);
 	}
 
 	@Override
@@ -38,5 +35,27 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void deleteProduct(String id) {
 		productRepository.deleteById(id);
+	}
+
+	@Override
+	public Page<Product> getProductsByCategory(Long categoryId, int page, int size) {
+		return productRepository.findByCategoryId(categoryId, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Product> getProductsByPowerRange(Double minPower, Double maxPower, int page, int size) {
+		return productRepository.findByPowerKwBetween(minPower, maxPower, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Product> getProductsByPriceRange(Double minPrice, Double maxPrice, int page, int size) {
+		return productRepository.findByPriceBetween(minPrice, maxPrice, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Product> getProductsAdvanced(String kw, Long categoryId, String brand, Double minPower, Double maxPower,
+			Double minHead, Double maxHead, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return productRepository.findWithFilters(kw, categoryId, brand, minPower, maxPower, minHead, maxHead, pageable);
 	}
 }

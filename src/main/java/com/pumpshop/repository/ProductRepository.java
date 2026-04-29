@@ -12,10 +12,31 @@ import com.pumpshop.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
-	@Query("SELECT p FROM Product p WHERE p.name LIKE %:kw% OR p.brand LIKE %:kw%")
-	Page<Product> findAllByNameOrBrand(@Param("kw") String kw, Pageable pageable);
+	@Query("SELECT p FROM Product p WHERE " +
+	       "(:kw IS NULL OR p.name LIKE %:kw% OR p.brand LIKE %:kw% OR p.description LIKE %:kw%) AND " +
+	       "(:categoryId IS NULL OR p.category.id = :categoryId) AND " +
+	       "(:brand IS NULL OR p.brand = :brand) AND " +
+	       "(:minPower IS NULL OR p.powerKw >= :minPower) AND " +
+	       "(:maxPower IS NULL OR p.powerKw <= :maxPower) AND " +
+	       "(:minHead IS NULL OR p.headMax >= :minHead) AND " +
+	       "(:maxHead IS NULL OR p.headMax <= :maxHead)")
+	Page<Product> findWithFilters(
+			@Param("kw") String kw,
+			@Param("categoryId") Long categoryId,
+			@Param("brand") String brand,
+			@Param("minPower") Double minPower,
+			@Param("maxPower") Double maxPower,
+			@Param("minHead") Double minHead,
+			@Param("maxHead") Double maxHead,
+			Pageable pageable);
 
 	List<Product> findByBrand(String brand);
 
 	List<Product> findByPriceLessThan(Double price);
+
+	Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+
+	Page<Product> findByPowerKwBetween(Double min, Double max, Pageable pageable);
+
+	Page<Product> findByPriceBetween(Double min, Double max, Pageable pageable);
 }

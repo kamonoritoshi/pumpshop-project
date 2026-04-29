@@ -51,54 +51,7 @@
           </p>
         </div>
 
-        <div class="specs-container mb-5">
-          <h4 class="pb-3 mb-4 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
-            <i class="bi bi-gear-fill" style="color: var(--accent);"></i> Thông số kỹ thuật chi tiết
-          </h4>
-
-          <div class="table-responsive">
-            <table class="table table-borderless align-middle" style="color: var(--text-main);">
-              <tbody>
-                <tr ng-if="product.headMax" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  <td class="text-muted w-50 py-3">Cột áp tối đa (Head)</td>
-                  <td class="fw-medium py-3">{{product.headMax}} m</td>
-                </tr>
-                <tr ng-if="product.headStandard" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  <td class="text-muted py-3">Cột áp định mức</td>
-                  <td class="fw-medium py-3">{{product.headStandard}} m</td>
-                </tr>
-                <tr ng-if="product.flowMax" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  <td class="text-muted py-3">Lưu lượng tối đa (Flow)</td>
-                  <td class="fw-medium py-3">{{product.flowMax}} m³/h</td>
-                </tr>
-                <tr ng-if="product.flowStandard" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  <td class="text-muted py-3">Lưu lượng định mức</td>
-                  <td class="fw-medium py-3">{{product.flowStandard}} m³/h</td>
-                </tr>
-                <tr ng-if="product.powerKw" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  <td class="text-muted py-3">Công suất động cơ</td>
-                  <td class="fw-medium py-3">{{product.powerKw}} kW ({{product.powerHp}} HP)</td>
-                </tr>
-                <tr ng-if="product.voltage" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  <td class="text-muted py-3">Điện áp</td>
-                  <td class="fw-medium py-3">
-                    {{product.voltage}} / {{product.phase}} Pha / {{product.frequency}}Hz
-                  </td>
-                </tr>
-                <tr ng-if="product.materialBody" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                  <td class="text-muted py-3">Vật liệu thân bơm</td>
-                  <td class="fw-medium py-3">{{product.materialBody}}</td>
-                </tr>
-                <tr ng-if="product.weight">
-                  <td class="text-muted py-3">Trọng lượng máy</td>
-                  <td class="fw-medium py-3">{{product.weight}} kg</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="row gx-3">
+        <div class="row gx-3 mb-5">
           <div class="col-10">
             <button class="btn-gradient w-100 rounded-3 py-3 fw-bold fs-5" ng-click="addToCart(product)" ng-disabled="product.quantity <= 0">
               <i class="bi bi-cart-plus me-2"></i> THÊM VÀO GIỎ HÀNG
@@ -110,9 +63,89 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Review Section -->
-        <div class="mt-5 pt-5 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+  <!-- Detailed Specifications Section -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="glass-card p-4 p-md-5">
+        <h4 class="fw-bold mb-4">
+          <i class="bi bi-gear-fill me-2" style="color: var(--accent);"></i> Thông số kỹ thuật chi tiết
+        </h4>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <tbody>
+              <tr ng-if="product.powerKw || product.powerHp">
+                <td class="text-muted w-40 py-3">Công suất</td>
+                <td class="text-main fw-medium py-3">
+                  <span ng-if="product.powerKw">{{product.powerKw}} kW</span>
+                  <span ng-if="product.powerKw && product.powerHp"> / </span>
+                  <span ng-if="product.powerHp">{{product.powerHp}} HP</span>
+                </td>
+              </tr>
+              <tr ng-if="product.headMax || product.headStandard">
+                <td class="text-muted py-3">Cột áp</td>
+                <td class="text-main fw-medium py-3">
+                  <span ng-if="product.headMax">Tối đa {{product.headMax}} m</span>
+                  <span ng-if="product.headMax && product.headStandard"> (</span>
+                  <span ng-if="product.headStandard">Tiêu chuẩn: {{product.headStandard}} m</span>
+                  <span ng-if="product.headMax && product.headStandard">)</span>
+                </td>
+              </tr>
+              <tr ng-if="product.flowMax || product.flowStandard">
+                <td class="text-muted py-3">Lưu lượng</td>
+                <td class="text-main fw-medium py-3">
+                  <span ng-if="product.flowMax">Tối đa {{product.flowMax}} m³/h</span>
+                  <span ng-if="product.flowMax && product.flowStandard"> (</span>
+                  <span ng-if="product.flowStandard">Tiêu chuẩn: {{product.flowStandard}} m³/h</span>
+                  <span ng-if="product.flowMax && product.flowStandard">)</span>
+                </td>
+              </tr>
+              <tr ng-if="product.voltage || product.phase || product.frequency">
+                <td class="text-muted py-3">Điện áp</td>
+                <td class="text-main fw-medium py-3">
+                  {{product.voltage}} V / {{product.phase}} Pha / {{product.frequency}} Hz
+                </td>
+              </tr>
+              <tr ng-if="product.suctionSize || product.dischargeSize">
+                <td class="text-muted py-3">Kích thước cổng</td>
+                <td class="text-main fw-medium py-3">
+                  Hút {{product.suctionSize}} - Xả {{product.dischargeSize}}
+                </td>
+              </tr>
+              <tr ng-if="product.materialBody || product.materialImpeller">
+                <td class="text-muted py-3">Chất liệu</td>
+                <td class="text-main fw-medium py-3">
+                  Thân {{product.materialBody}}, Cánh {{product.materialImpeller}}
+                </td>
+              </tr>
+              <tr ng-if="product.weight">
+                <td class="text-muted py-3">Trọng lượng</td>
+                <td class="text-main fw-medium py-3">{{product.weight}} kg</td>
+              </tr>
+              <tr ng-if="product.protectionIp">
+                <td class="text-muted py-3">Cấp bảo vệ</td>
+                <td class="text-main fw-medium py-3">{{product.protectionIp}}</td>
+              </tr>
+              <tr ng-if="product.liquidTempMax">
+                <td class="text-muted py-3">Nhiệt độ chất lỏng tối đa</td>
+                <td class="text-main fw-medium py-3">{{product.liquidTempMax}} °C</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Section -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="glass-card p-4 p-md-5">
+
+        <div class="review-section">
           <h4 class="fw-bold mb-4">
             <i class="bi bi-chat-left-text-fill me-2" style="color: var(--accent);"></i> Đánh giá sản phẩm
           </h4>

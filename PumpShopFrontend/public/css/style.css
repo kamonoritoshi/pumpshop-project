@@ -127,6 +127,33 @@ body {
     color: var(--text-muted) !important;
 }
 
+.text-main {
+    color: var(--text-main) !important;
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-main);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0.03) !important;
+    color: var(--text-main) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(even) > * {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: var(--text-main) !important;
+}
+
+.table-hover > tbody > tr:hover > * {
+    background-color: rgba(255, 255, 255, 0.07) !important;
+    box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0.07) !important;
+}
+
 .border-bottom {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
@@ -163,3 +190,59 @@ body {
     background: rgba(239, 68, 68, 0.1) !important;
 }
 
+/* Layout Fixes */
+.main-container {
+    padding: 2rem 0;
+}
+
+.header-section {
+    padding-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-bar-wrapper {
+    position: relative;
+    z-index: 1020; /* Ensure search bar is above other elements */
+    flex-grow: 1;
+    margin: 0 2rem;
+}
+
+/* Banner Fixes */
+.banner-main {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+}
+
+.banner-content {
+    width: 50%;
+    padding: 3rem;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.95); /* Ensure text stays on white */
+    height: 100%;
+}
+
+.banner-image {
+    width: 50%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Common spacing */
+.section-padding {
+    padding: 4rem 0;
+}

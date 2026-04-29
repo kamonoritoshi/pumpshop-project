@@ -11,4 +11,12 @@ public interface ProductService {
 	Product saveProduct(Product product);
 
 	void deleteProduct(String id);
+
+	Page<Product> getProductsByCategory(Long categoryId, int page, int size);
+
+	Page<Product> getProductsByPowerRange(Double minPower, Double maxPower, int page, int size);
+
+	Page<Product> getProductsByPriceRange(Double minPrice, Double maxPrice, int page, int size);
+	
+	Page<Product> getProductsAdvanced(String kw, Long categoryId, String brand, Double minPower, Double maxPower, Double minHead, Double maxHead, int page, int size);
 }

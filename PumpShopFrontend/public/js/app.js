@@ -144,7 +144,22 @@ app.run(function ($rootScope, $location, AuthService) {
 // HomeController
 app.controller("HomeController", function ($scope, $http, $location, CartService, NotificationService) {
   $scope.products = [];
+  $scope.categories = [];
   $scope.kw = "";
+  $scope.filterData = {
+    categoryId: null,
+    brand: null,
+    minPower: null,
+    maxPower: null,
+    minHead: null,
+    maxHead: null
+  };
+
+  // Load categories for filter
+  $http.get("http://localhost:8080/api/v1/products/categories").then(res => {
+    $scope.categories = res.data;
+  }).catch(err => console.error("Lỗi lấy danh mục:", err));
+
   $scope.pager = {
     page: 0,
     size: 8,
@@ -152,8 +167,20 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
     items: [],
 
     init() {
-      var url = `http://localhost:8080/api/v1/products?page=${this.page}&size=${this.size}&kw=${$scope.kw}`;
-      $http.get(url).then(res => {
+      // Build search parameters
+      let params = {
+        page: this.page,
+        size: this.size,
+        kw: $scope.kw || null,
+        categoryId: $scope.filterData.categoryId || null,
+        brand: $scope.filterData.brand || null,
+        minPower: $scope.filterData.minPower || null,
+        maxPower: $scope.filterData.maxPower || null,
+        minHead: $scope.filterData.minHead || null,
+        maxHead: $scope.filterData.maxHead || null
+      };
+
+      $http.get("http://localhost:8080/api/v1/products", { params: params }).then(res => {
         this.items = res.data.content;
         this.count = res.data.totalPages;
       }).catch(err => {
@@ -172,6 +199,17 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
   $scope.search = function () {
     $scope.pager.page = 0;
     $scope.pager.init();
+  };
+
+  $scope.resetFilter = function() {
+    $scope.kw = "";
+    $scope.filterData = { categoryId: null, minPower: null, maxPower: null, minHead: null, maxHead: null };
+    $scope.search();
+  };
+
+  $scope.setCategory = function(id) {
+    $scope.filterData.categoryId = id;
+    $scope.search();
   };
 
   $scope.addToCart = function (product) {
@@ -257,6 +295,9 @@ app.controller("CheckoutController", function ($scope, $http, $location, CartSer
       NotificationService.show("Giỏ hàng trống!", "warning");
       return;
     }
+
+    $scope.isLoading = true;
+
     $scope.order.totalAmount = $scope.totalAmount;
     $scope.order.orderDetails = $scope.cart.map(item => ({
       product: { id: item.id },
@@ -264,11 +305,19 @@ app.controller("CheckoutController", function ($scope, $http, $location, CartSer
       quantity: item.quantityInCart
     }));
 
-    $http.post("http://localhost:8080/api/v1/orders", $scope.order).then(function (res) {
-      NotificationService.show("Đặt hàng thành công! Mã đơn: " + res.data.id, "success");
-      CartService.clear();
-      $location.path("/");
-    }).catch(() => NotificationService.show("Lỗi khi xử lý đơn hàng!", "danger"));
+    $http.post("http://localhost:8080/api/v1/orders", $scope.order)
+      .then(function (res) {
+        NotificationService.show("Đặt hàng thành công!");
+        CartService.clear();
+        $location.path("/");
+      })
+      .catch(function (error) {
+        console.error("Lỗi đặt hàng:", error);
+        NotificationService.show("Đặt hàng thất bại, vui lòng thử lại sau", "danger");
+      })
+      .finally(function () {
+        $scope.isLoading = false;
+      });
   };
 });
 

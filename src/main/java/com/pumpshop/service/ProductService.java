@@ -18,5 +18,7 @@ public interface ProductService {
 
 	Page<Product> getProductsByPriceRange(Double minPrice, Double maxPrice, int page, int size);
 	
-	Page<Product> getProductsAdvanced(String kw, Long categoryId, String brand, Double minPower, Double maxPower, Double minHead, Double maxHead, int page, int size);
+	Page<Product> getProductsAdvanced(String kw, Long categoryId, java.util.List<String> brands, Double minPower, Double maxPower, Double minHead, Double maxHead, int page, int size);
+
+	java.util.List<String> getAllBrands();
 }

@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "products")
@@ -22,6 +24,7 @@ public class Product {
     private String id;
 
     @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private String name;
 
     @Column(nullable = false)
@@ -30,6 +33,7 @@ public class Product {
     private String image;
 
     @Column(columnDefinition = "TEXT")
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
     private String description;
 
     @Column(name = "suction_size")
@@ -79,6 +83,7 @@ public class Product {
     private Double solidPassage;
 
     private Double weight;
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private String brand;
     private Integer quantity;
 

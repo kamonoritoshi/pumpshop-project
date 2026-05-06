@@ -1,0 +1,223 @@
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar Navigation (Optional or just use Tabs) -->
+        <div class="col-md-3 mb-4">
+            <div class="glass-card p-3">
+                <div class="text-center mb-3">
+                    <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center text-white" style="width: 80px; height: 80px; font-size: 2rem;">
+                        {{ currentUser.fullName.charAt(0) || currentUser.username.charAt(0) }}
+                    </div>
+                    <h5 class="mt-2 mb-0">{{ currentUser.fullName || currentUser.username }}</h5>
+                    <p class="text-muted small">Khách hàng thân thiết</p>
+                </div>
+                <div class="list-group list-group-flush bg-transparent">
+                    <button class="list-group-item list-group-item-action bg-transparent border-0 d-flex align-items-center" ng-class="{'active-tab': activeSection === 'profile'}" ng-click="activeSection = 'profile'">
+                        <i class="bi bi-person-fill me-2"></i> Thông tin tài khoản
+                    </button>
+                    <button class="list-group-item list-group-item-action bg-transparent border-0 d-flex align-items-center" ng-class="{'active-tab': activeSection === 'history'}" ng-click="activeSection = 'history'; loadOrderHistory()">
+                        <i class="bi bi-bag-check-fill me-2"></i> Lịch sử đơn hàng
+                    </button>
+                    <button class="list-group-item list-group-item-action bg-transparent border-0 d-flex align-items-center text-danger" ng-click="logout()">
+                        <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="col-md-9">
+            <!-- Profile Section -->
+            <div ng-show="activeSection === 'profile'" class="glass-card p-4 animate__animated animate__fadeIn">
+                <h4 class="mb-4 d-flex align-items-center">
+                    <i class="bi bi-person-circle me-2 text-primary"></i> Thông tin cá nhân
+                </h4>
+                <form ng-submit="updateInfo()">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="glass-input" ng-model="userForm.username" readonly disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Họ và tên</label>
+                            <input type="text" class="glass-input" ng-model="userForm.fullName" placeholder="Nhập họ và tên">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="glass-input" ng-model="userForm.email" placeholder="email@example.com">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text" class="glass-input" ng-model="userForm.phone" placeholder="0123 456 789">
+                        </div>
+                        <div class="col-12 mb-4">
+                            <label class="form-label">Địa chỉ</label>
+                            <textarea class="glass-input" ng-model="userForm.address" rows="2" placeholder="Nhập địa chỉ giao hàng"></textarea>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-gradient px-4" ng-disabled="isLoading">
+                            <span ng-show="isLoading" class="spinner-border spinner-border-sm me-1"></span>
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-5">
+
+                <h4 class="mb-4 d-flex align-items-center">
+                    <i class="bi bi-shield-lock-fill me-2 text-warning"></i> Đổi mật khẩu
+                </h4>
+                <form ng-submit="changePassword()">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Mật khẩu cũ</label>
+                            <input type="password" class="glass-input" ng-model="passwordForm.oldPassword" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Mật khẩu mới</label>
+                            <input type="password" class="glass-input" ng-model="passwordForm.newPassword" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Xác nhận mật khẩu</label>
+                            <input type="password" class="glass-input" ng-model="passwordForm.confirmPassword" required>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-warning px-4 text-white" ng-disabled="isLoadingPass">
+                            <span ng-show="isLoadingPass" class="spinner-border spinner-border-sm me-1"></span>
+                            Cập nhật mật khẩu
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Order History Section -->
+            <div ng-show="activeSection === 'history'" class="glass-card p-4 animate__animated animate__fadeIn">
+                <h4 class="mb-4 d-flex align-items-center">
+                    <i class="bi bi-clock-history me-2 text-success"></i> Lịch sử đơn hàng
+                </h4>
+                
+                <div ng-show="isOrdersLoading" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Đang tải lịch sử đơn hàng...</p>
+                </div>
+
+                <div ng-show="!isOrdersLoading && orderHistory.length === 0" class="text-center py-5">
+                    <i class="bi bi-cart-x text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-2 text-muted">Bạn chưa có đơn hàng nào.</p>
+                    <a href="#!/" class="btn btn-gradient btn-sm mt-2">Mua sắm ngay</a>
+                </div>
+
+                <div ng-show="!isOrdersLoading && orderHistory.length > 0" class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Mã ĐH</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="order in orderHistory">
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                                <td class="fw-bold text-danger">{{ order.totalAmount | number:0 }}đ</td>
+                                <td>
+                                    <span class="badge" ng-class="{
+                                        'bg-warning': order.status === 'PENDING',
+                                        'bg-success': order.status === 'COMPLETED',
+                                        'bg-info': order.status === 'SHIPPING',
+                                        'bg-danger': order.status === 'CANCELLED'
+                                    }">{{ order.status }}</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm" ng-click="viewOrderDetail(order)">
+                                        <i class="bi bi-eye"></i> Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .active-tab {
+        background: rgba(var(--bs-primary-rgb), 0.2) !important;
+        color: white !important;
+        border-right: 4px solid var(--bs-primary) !important;
+        font-weight: 600;
+    }
+    .glass-card {
+        background: rgba(30, 41, 59, 0.7); /* Darker slate background for better contrast */
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+    .glass-input {
+        width: 100%;
+        padding: 0.75rem 1.2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        outline: none;
+        transition: all 0.3s;
+        color: white;
+    }
+    .glass-input:focus {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+    .glass-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+    .btn-gradient {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        filter: brightness(1.1);
+        color: white;
+    }
+    .form-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    .list-group-item {
+        color: rgba(255, 255, 255, 0.7) !important;
+        transition: all 0.2s;
+        margin-bottom: 5px;
+        border-radius: 8px !important;
+    }
+    .list-group-item:hover {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: white !important;
+    }
+    .table {
+        color: white;
+    }
+    .table-striped > tbody > tr:nth-of-type(odd) > * {
+        background-color: rgba(255, 255, 255, 0.02);
+        color: white;
+    }
+    .table-striped > tbody > tr:nth-of-type(even) > * {
+        background-color: transparent;
+        color: white;
+    }
+</style>

@@ -13,9 +13,9 @@ import com.pumpshop.entity.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
 	@Query("SELECT p FROM Product p WHERE " +
-	       "(:kw IS NULL OR p.name LIKE %:kw% OR p.brand LIKE %:kw% OR p.description LIKE %:kw%) AND " +
+	       "(:kw IS NULL OR LOWER(CAST(p.name AS string)) LIKE LOWER(CAST(CONCAT('%', :kw, '%') AS string)) OR LOWER(CAST(p.brand AS string)) LIKE LOWER(CAST(CONCAT('%', :kw, '%') AS string)) OR LOWER(CAST(p.description AS string)) LIKE LOWER(CAST(CONCAT('%', :kw, '%') AS string))) AND " +
 	       "(:categoryIds IS NULL OR p.category.id IN :categoryIds) AND " +
-	       "(:brand IS NULL OR p.brand = :brand) AND " +
+	       "(:brands IS NULL OR p.brand IN :brands) AND " +
 	       "(:minPower IS NULL OR p.powerKw >= :minPower) AND " +
 	       "(:maxPower IS NULL OR p.powerKw <= :maxPower) AND " +
 	       "(:minHead IS NULL OR p.headMax >= :minHead) AND " +
@@ -23,12 +23,15 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 	Page<Product> findWithFilters(
 			@Param("kw") String kw,
 			@Param("categoryIds") List<Long> categoryIds,
-			@Param("brand") String brand,
+			@Param("brands") List<String> brands,
 			@Param("minPower") Double minPower,
 			@Param("maxPower") Double maxPower,
 			@Param("minHead") Double minHead,
 			@Param("maxHead") Double maxHead,
 			Pageable pageable);
+
+	@Query("SELECT DISTINCT p.brand FROM Product p WHERE p.brand IS NOT NULL ORDER BY p.brand")
+	List<String> findAllBrands();
 
 	List<Product> findByBrand(String brand);
 

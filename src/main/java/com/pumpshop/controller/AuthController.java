@@ -46,7 +46,22 @@ public class AuthController {
                 "fullName", user.getFullName() != null ? user.getFullName() : "",
                 "email", user.getEmail() != null ? user.getEmail() : "",
                 "phone", user.getPhone() != null ? user.getPhone() : "",
+                "address", user.getAddress() != null ? user.getAddress() : "",
                 "roles", user.getRoles().stream().map(r -> r.getName()).toList()
         ));
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody RegisterRequest request) {
+        authService.updateProfile(userDetails.getUsername(), request);
+        return ResponseEntity.ok(java.util.Map.of("message", "Cập nhật thông tin thành công"));
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@AuthenticationPrincipal UserDetails userDetails, @RequestBody java.util.Map<String, String> request) {
+        String oldPassword = request.get("oldPassword");
+        String newPassword = request.get("newPassword");
+        authService.changePassword(userDetails.getUsername(), oldPassword, newPassword);
+        return ResponseEntity.ok(java.util.Map.of("message", "Đổi mật khẩu thành công"));
     }
 }

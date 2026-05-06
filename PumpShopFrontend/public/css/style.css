@@ -8,6 +8,7 @@
     --accent: #38bdf8;
     --success: #10b981;
     --danger: #ef4444;
+    --accent-gradient: linear-gradient(135deg, #4f46e5, #38bdf8);
 }
 
 body {
@@ -178,16 +179,33 @@ body {
 }
 
 /* Dark Dropdown */
+.dropdown-menu {
+    background-color: #1e293b !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+    opacity: 1 !important;
+    z-index: 2050 !important;
+}
+
 .dropdown-item {
-    color: #cbd5e1;
-    transition: background 0.2s;
+    color: #cbd5e1 !important;
+    padding: 0.6rem 1rem;
+    transition: all 0.2s ease;
 }
+
 .dropdown-item:hover {
-    background: rgba(255,255,255,0.07) !important;
-    color: #fff;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+    transform: translateX(3px);
 }
+
 .dropdown-item.text-danger:hover {
-    background: rgba(239, 68, 68, 0.1) !important;
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+}
+
+.dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Layout Fixes */
@@ -300,3 +318,165 @@ body {
 .fs-small {
     font-size: 0.75rem;
 }
+
+/* Advanced Filter Enhancements */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.x-small {
+    font-size: 0.7rem;
+}
+
+.glass-range {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 5px;
+    outline: none;
+}
+
+.glass-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent) !important;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    border: 2px solid #fff;
+}
+
+.custom-checkbox .form-check-input {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.custom-checkbox .form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.hover-opacity-100:hover {
+    opacity: 1 !important;
+}
+
+/* --- Star Rating --- */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+    transform: scale(1.1);
+}
+
+.star-rating label:active {
+    transform: scale(0.9);
+}
+
+/* --- File Upload --- */
+.file-upload-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.file-upload-box {
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-upload-box:hover {
+    border-color: var(--accent);
+    background: rgba(56, 189, 248, 0.05);
+}
+
+.file-upload-box i {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.file-upload-box .upload-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.file-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.file-preview-item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.file-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-preview-item .remove-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(239, 68, 68, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+

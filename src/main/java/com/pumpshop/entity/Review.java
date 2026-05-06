@@ -42,4 +42,6 @@ public class Review {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
     private Date createdAt;
+
+    private String image;
 }

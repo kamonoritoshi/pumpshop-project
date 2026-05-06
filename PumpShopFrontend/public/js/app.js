@@ -43,7 +43,10 @@ app.factory("AuthService", function ($window) {
         roles: data.roles
       }));
     },
-    getToken: function () { return $window.localStorage.getItem(TOKEN_KEY); },
+    getToken: function () { 
+      var t = $window.localStorage.getItem(TOKEN_KEY);
+      return (t && t !== "undefined" && t !== "null") ? t : null;
+    },
     getUser: function () {
       var u = $window.localStorage.getItem(USER_KEY);
       return u ? JSON.parse(u) : null;
@@ -68,9 +71,11 @@ app.factory('AuthInterceptor', function (AuthService, $location, NotificationSer
     },
     responseError: function (rejection) {
       if (rejection.status === 401 || rejection.status === 403) {
-        AuthService.logout();
-        $location.path('/login');
-        NotificationService.show("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.", "warning");
+        if ($location.path() !== '/login' && AuthService.isLoggedIn()) {
+          AuthService.logout();
+          $location.path('/login');
+          NotificationService.show("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.", "warning");
+        }
       }
       return $q.reject(rejection);
     }
@@ -118,6 +123,7 @@ app.config(function ($routeProvider, $httpProvider) {
     .when("/lookup", { templateUrl: "views/lookup.html", controller: "LookupController" })
     .when("/login", { templateUrl: "views/login.html", controller: "LoginController" })
     .when("/register", { templateUrl: "views/register.html", controller: "RegisterController" })
+    .when("/profile", { templateUrl: "views/profile.html", controller: "ProfileController", requireAuth: true })
     .otherwise({ redirectTo: "/" });
 
   $httpProvider.interceptors.push('AuthInterceptor');
@@ -148,12 +154,14 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
   $scope.kw = "";
   $scope.filterData = {
     categoryId: null,
-    brand: null,
+    brands: [],
     minPower: null,
     maxPower: null,
     minHead: null,
     maxHead: null
   };
+
+  $scope.allBrands = [];
 
   $scope.expandedCategories = {};
   $scope.toggleCategory = function(id, event) {
@@ -169,6 +177,18 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
     $scope.categories = res.data;
   }).catch(err => console.error("Lỗi lấy danh mục:", err));
 
+  // Load unique brands
+  $http.get("http://localhost:8080/api/v1/products/brands").then(res => {
+    $scope.allBrands = res.data;
+  }).catch(err => console.error("Lỗi lấy thương hiệu:", err));
+
+  $scope.toggleBrand = function(brand) {
+    var idx = $scope.filterData.brands.indexOf(brand);
+    if (idx > -1) $scope.filterData.brands.splice(idx, 1);
+    else $scope.filterData.brands.push(brand);
+    $scope.search();
+  };
+
   $scope.pager = {
     page: 0,
     size: 8,
@@ -182,7 +202,7 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
         size: this.size,
         kw: $scope.kw || null,
         categoryId: $scope.filterData.categoryId || null,
-        brand: $scope.filterData.brand || null,
+        brand: ($scope.filterData.brands && $scope.filterData.brands.length > 0) ? $scope.filterData.brands : null,
         minPower: $scope.filterData.minPower || null,
         maxPower: $scope.filterData.maxPower || null,
         minHead: $scope.filterData.minHead || null,
@@ -212,7 +232,7 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
 
   $scope.resetFilter = function() {
     $scope.kw = "";
-    $scope.filterData = { categoryId: null, minPower: null, maxPower: null, minHead: null, maxHead: null };
+    $scope.filterData = { categoryId: null, brands: [], minPower: null, maxPower: null, minHead: null, maxHead: null };
     $scope.search();
   };
 
@@ -250,19 +270,56 @@ app.controller("DetailController", function ($scope, $http, $routeParams, $rootS
   };
 
   $scope.sendReview = function () {
+    var fileInput = document.getElementById('reviewImage');
+    var file = fileInput.files[0];
+
+    var formData = new FormData();
     var reviewData = {
       productId: $routeParams.id,
       rating: $scope.reviewForm.rating,
       comment: $scope.reviewForm.comment
     };
 
-    $http.post("http://localhost:8080/api/v1/reviews", reviewData).then(function (response) {
+    formData.append("review", new Blob([JSON.stringify(reviewData)], { type: "application/json" }));
+    if (file) {
+      formData.append("image", file);
+    }
+
+    $http.post("http://localhost:8080/api/v1/reviews", formData, {
+      transformRequest: angular.identity,
+      headers: { 'Content-Type': undefined }
+    }).then(function (response) {
       NotificationService.show("Cảm ơn bạn đã đánh giá!");
       $scope.reviewForm.comment = '';
+      $scope.reviewForm.rating = 5;
+      $scope.previewImage = null;
+      if (fileInput) fileInput.value = '';
       $scope.loadReviews();
     }).catch(function (error) {
       NotificationService.show("Lỗi khi gửi đánh giá!", "danger");
     });
+  };
+
+  $scope.onFileSelect = function (element) {
+    if (element.files && element.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        $scope.$apply(function () {
+          $scope.previewImage = e.target.result;
+        });
+      };
+      reader.readAsDataURL(element.files[0]);
+    }
+  };
+
+  $scope.removeFile = function () {
+    $scope.previewImage = null;
+    var fileInput = document.getElementById('reviewImage');
+    if (fileInput) fileInput.value = '';
+  };
+
+  $scope.openImage = function(imageUrl) {
+    window.open('http://localhost:8080/uploads/reviews/' + imageUrl, '_blank');
   };
 
   $scope.$on("$destroy", () => { $rootScope.product = null; });
@@ -385,4 +442,79 @@ app.controller('RegisterController', function ($scope, $http, $location, Notific
       })
       .finally(() => $scope.isLoading = false);
   };
+});
+
+// ProfileController
+app.controller('ProfileController', function ($scope, $http, AuthService, NotificationService) {
+  $scope.activeSection = 'profile';
+  $scope.userForm = {};
+  $scope.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
+  $scope.orderHistory = [];
+
+  $scope.loadProfile = function () {
+    $http.get('http://localhost:8080/api/v1/auth/me')
+      .then(res => {
+        $scope.userForm = res.data;
+      })
+      .catch(err => {
+        NotificationService.show("Lỗi tải thông tin tài khoản", "danger");
+      });
+  };
+
+  $scope.updateInfo = function () {
+    $scope.isLoading = true;
+    $http.put('http://localhost:8080/api/v1/auth/profile', $scope.userForm)
+      .then(res => {
+        NotificationService.show(res.data.message);
+        var user = AuthService.getUser();
+        user.fullName = $scope.userForm.fullName;
+        localStorage.setItem('pumpshop_user', JSON.stringify(user));
+        $scope.loadProfile();
+      })
+      .catch(err => {
+        NotificationService.show("Lỗi cập nhật thông tin", "danger");
+      })
+      .finally(() => $scope.isLoading = false);
+  };
+
+  $scope.changePassword = function () {
+    if ($scope.passwordForm.newPassword !== $scope.passwordForm.confirmPassword) {
+      NotificationService.show("Mật khẩu xác nhận không khớp", "warning");
+      return;
+    }
+
+    $scope.isLoadingPass = true;
+    $http.put('http://localhost:8080/api/v1/auth/change-password', {
+      oldPassword: $scope.passwordForm.oldPassword,
+      newPassword: $scope.passwordForm.newPassword
+    })
+      .then(res => {
+        NotificationService.show(res.data.message);
+        $scope.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
+      })
+      .catch(err => {
+        const msg = err.data && err.data.message ? err.data.message : "Lỗi đổi mật khẩu";
+        NotificationService.show(msg, "danger");
+      })
+      .finally(() => $scope.isLoadingPass = false);
+  };
+
+  $scope.loadOrderHistory = function () {
+    $scope.isOrdersLoading = true;
+    $http.get('http://localhost:8080/api/v1/orders/my-history')
+      .then(res => {
+        $scope.orderHistory = res.data;
+      })
+      .catch(err => {
+        NotificationService.show("Lỗi tải lịch sử đơn hàng", "danger");
+      })
+      .finally(() => $scope.isOrdersLoading = false);
+  };
+
+  $scope.viewOrderDetail = function (order) {
+    var details = order.orderDetails.map(d => `${d.product.name} x ${d.quantity}`).join('\n');
+    alert(`Chi tiết đơn hàng #${order.id}:\n\n${details}\n\nTổng cộng: ${order.totalAmount.toLocaleString()}đ`);
+  };
+
+  $scope.loadProfile();
 });

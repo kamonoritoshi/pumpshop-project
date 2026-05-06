@@ -57,38 +57,59 @@
                     <h5 class="mb-0 title-gradient"><i class="bi bi-funnel"></i> Bộ lọc nâng cao</h5>
                 </div>
                 <div class="p-4">
+                    <!-- Brand Checkboxes -->
                     <div class="mb-4">
-                        <label class="form-label">Thương hiệu:</label>
-                        <select class="form-select glass-input border-0" ng-model="filterData.brand" ng-change="search()">
-                            <option value="" class="text-dark">-- Tất cả các hãng --</option>
-                            <option value="Pentax" class="text-dark">Pentax</option>
-                            <option value="Ebara" class="text-dark">Ebara</option>
-                            <option value="Panasonic" class="text-dark">Panasonic</option>
-                            <option value="Wilo" class="text-dark">Wilo</option>
-                            <option value="Hanil" class="text-dark">Hanil</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label">Khoảng công suất (kW):</label>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="number" class="form-control glass-input border-0 px-2" ng-model="filterData.minPower" placeholder="Từ" ng-change="search()"/>
-                            <span class="text-muted">-</span>
-                            <input type="number" class="form-control glass-input border-0 px-2" ng-model="filterData.maxPower" placeholder="Đến" ng-change="search()"/>
+                        <label class="form-label fw-bold small text-uppercase opacity-75">Thương hiệu:</label>
+                        <div class="brand-list custom-scrollbar pe-2" style="max-height: 160px; overflow-y: auto;">
+                            <div class="form-check custom-checkbox mb-2" ng-repeat="b in allBrands">
+                                <input class="form-check-input" type="checkbox" id="brand-{{$index}}" 
+                                       ng-checked="filterData.brands.indexOf(b) > -1"
+                                       ng-click="toggleBrand(b)">
+                                <label class="form-check-label small cursor-pointer" for="brand-{{$index}}">
+                                    {{b}}
+                                </label>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Power Range -->
                     <div class="mb-4">
-                        <label class="form-label">Khoảng cột áp (m):</label>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="number" class="form-control glass-input border-0 px-2" ng-model="filterData.minHead" placeholder="Từ" ng-change="search()"/>
-                            <span class="text-muted">-</span>
-                            <input type="number" class="form-control glass-input border-0 px-2" ng-model="filterData.maxHead" placeholder="Đến" ng-change="search()"/>
+                        <label class="form-label fw-bold small text-uppercase opacity-75">Công suất (kW/HP):</label>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <input type="number" class="form-control glass-input border-0 text-center px-1" 
+                                   ng-model="filterData.minPower" placeholder="0" ng-change="search()" step="0.1"/>
+                            <span class="opacity-50">to</span>
+                            <input type="number" class="form-control glass-input border-0 text-center px-1" 
+                                   ng-model="filterData.maxPower" placeholder="Max" ng-change="search()" step="0.1"/>
+                        </div>
+                        <input type="range" class="form-range glass-range" min="0" max="100" step="0.5" 
+                               ng-model="filterData.maxPower" ng-change="search()">
+                        <div class="d-flex justify-content-between x-small opacity-50 mt-1">
+                            <span>0 kW</span>
+                            <span>100+ kW</span>
                         </div>
                     </div>
 
-                    <button class="btn btn-outline-light w-100 rounded-3" ng-click="resetFilter()">
-                        <i class="bi bi-trash"></i> Làm mới bộ lọc
+                    <!-- Head Range -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase opacity-75">Cột áp (m):</label>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <input type="number" class="form-control glass-input border-0 text-center px-1" 
+                                   ng-model="filterData.minHead" placeholder="0" ng-change="search()" step="1"/>
+                            <span class="opacity-50">to</span>
+                            <input type="number" class="form-control glass-input border-0 text-center px-1" 
+                                   ng-model="filterData.maxHead" placeholder="Max" ng-change="search()" step="1"/>
+                        </div>
+                        <input type="range" class="form-range glass-range" min="0" max="500" step="5" 
+                               ng-model="filterData.maxHead" ng-change="search()">
+                        <div class="d-flex justify-content-between x-small opacity-50 mt-1">
+                            <span>0 m</span>
+                            <span>500+ m</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline-light w-100 rounded-pill btn-sm mt-2 opacity-75 hover-opacity-100" ng-click="resetFilter()">
+                        <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
                     </button>
                 </div>
             </div>

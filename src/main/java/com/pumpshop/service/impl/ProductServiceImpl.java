@@ -63,11 +63,16 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Page<Product> getProductsAdvanced(String kw, Long categoryId, String brand, Double minPower, Double maxPower,
+	public Page<Product> getProductsAdvanced(String kw, Long categoryId, List<String> brands, Double minPower, Double maxPower,
 			Double minHead, Double maxHead, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		List<Long> categoryIds = getAllCategoryIds(categoryId);
-		return productRepository.findWithFilters(kw, categoryIds, brand, minPower, maxPower, minHead, maxHead, pageable);
+		return productRepository.findWithFilters(kw, categoryIds, brands, minPower, maxPower, minHead, maxHead, pageable);
+	}
+
+	@Override
+	public List<String> getAllBrands() {
+		return productRepository.findAllBrands();
 	}
 
 	private List<Long> getAllCategoryIds(Long categoryId) {

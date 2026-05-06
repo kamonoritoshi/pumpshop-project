@@ -161,7 +161,10 @@
               <div class="mb-2">
                 <span ng-repeat="i in [1,2,3,4,5]" class="bi" ng-class="i <= review.rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'"></span>
               </div>
-              <p class="text-muted mb-0">{{review.comment}}</p>
+              <p class="text-muted mb-2">{{review.comment}}</p>
+              <div ng-if="review.image" class="review-image-container mt-2">
+                <img ng-src="http://localhost:8080/uploads/reviews/{{review.image}}" class="rounded-3 shadow-sm" style="max-width: 150px; cursor: pointer;" ng-click="openImage(review.image)">
+              </div>
             </div>
           </div>
 
@@ -169,21 +172,43 @@
           <div ng-if="isLoggedIn" class="review-form p-4 rounded-3" style="background: rgba(255,255,255,0.03);">
             <h5 class="mb-3 text-white">Viết đánh giá của bạn</h5>
             <form ng-submit="sendReview()">
-              <div class="mb-3">
-                <label class="form-label text-muted small">Số sao</label>
-                <select class="form-select bg-dark text-white border-secondary" ng-model="reviewForm.rating" required>
-                  <option value="5">5 sao - Rất tốt</option>
-                  <option value="4">4 sao - Tốt</option>
-                  <option value="3">3 sao - Bình thường</option>
-                  <option value="2">2 sao - Kém</option>
-                  <option value="1">1 sao - Rất kém</option>
-                </select>
+              <div class="mb-4">
+                <label class="form-label text-muted small d-block mb-2">Đánh giá của bạn</label>
+                <div class="star-rating">
+                  <input type="radio" id="star5" ng-model="reviewForm.rating" value="5" /><label for="star5" class="bi bi-star-fill"></label>
+                  <input type="radio" id="star4" ng-model="reviewForm.rating" value="4" /><label for="star4" class="bi bi-star-fill"></label>
+                  <input type="radio" id="star3" ng-model="reviewForm.rating" value="3" /><label for="star3" class="bi bi-star-fill"></label>
+                  <input type="radio" id="star2" ng-model="reviewForm.rating" value="2" /><label for="star2" class="bi bi-star-fill"></label>
+                  <input type="radio" id="star1" ng-model="reviewForm.rating" value="1" /><label for="star1" class="bi bi-star-fill"></label>
+                </div>
               </div>
               <div class="mb-3">
                 <label class="form-label text-muted small">Bình luận</label>
-                <textarea class="form-control bg-dark text-white border-secondary" rows="3" ng-model="reviewForm.comment" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." required></textarea>
+                <textarea class="form-control glass-input" rows="3" ng-model="reviewForm.comment" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." required></textarea>
               </div>
-              <button type="submit" class="btn btn-primary px-4">Gửi đánh giá</button>
+              <div class="mb-4">
+                <label class="form-label text-muted small">Hình ảnh đính kèm</label>
+                <div class="file-upload-wrapper">
+                  <div class="file-upload-box" onclick="document.getElementById('reviewImage').click()">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <div class="upload-text">Kéo thả hoặc nhấp để tải ảnh lên</div>
+                    <div class="text-muted x-small mt-1">Chấp nhận JPG, PNG, WEBP</div>
+                  </div>
+                  <input type="file" id="reviewImage" accept="image/*" class="d-none" onchange="angular.element(this).scope().onFileSelect(this)">
+                  
+                  <div class="file-preview-container" ng-if="previewImage">
+                    <div class="file-preview-item">
+                      <img ng-src="{{previewImage}}">
+                      <button type="button" class="remove-btn" ng-click="removeFile()">
+                        <i class="bi bi-x"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-gradient px-5 py-2 rounded-pill fw-bold">
+                <i class="bi bi-send-fill me-2"></i> Gửi đánh giá
+              </button>
             </form>
           </div>
           <div ng-if="!isLoggedIn" class="alert alert-info border-0" style="background: rgba(13, 202, 240, 0.1); color: #0dcaf0;">

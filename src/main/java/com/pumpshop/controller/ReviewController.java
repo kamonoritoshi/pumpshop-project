@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.pumpshop.entity.Review;
 import com.pumpshop.entity.User;
@@ -35,13 +36,14 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewsByProduct(productId));
     }
 
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Review> addReview(
-            @RequestBody Review review,
+            @RequestPart("review") Review review,
+            @RequestPart(value = "image", required = false) MultipartFile image,
             @AuthenticationPrincipal UserDetails userDetails) {
         System.out.println("Debug Controller: Reached POST Add Review");
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
         review.setUser(user);
-        return ResponseEntity.ok(reviewService.addReview(review));
+        return ResponseEntity.ok(reviewService.addReview(review, image));
     }
 }

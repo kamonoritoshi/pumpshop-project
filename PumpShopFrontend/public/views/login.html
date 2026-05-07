@@ -32,6 +32,15 @@
                     </div>
                 </div>
 
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" ng-model="rememberMe" style="cursor: pointer;">
+                        <label class="form-check-label text-muted small" for="rememberMe" style="cursor: pointer;">
+                            Ghi nhớ tên đăng nhập
+                        </label>
+                    </div>
+                </div>
+
                 <div class="alert border-0 mb-4" ng-show="errorMessage"
                      style="background: rgba(239, 68, 68, 0.12); color: #fca5a5; border-left: 4px solid var(--danger) !important;">
                     <i class="bi bi-exclamation-circle me-2"></i>{{errorMessage}}

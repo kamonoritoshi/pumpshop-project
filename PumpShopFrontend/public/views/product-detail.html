@@ -20,32 +20,32 @@
             <li class="breadcrumb-item">
               <a href="#!/" class="text-decoration-none text-muted">Trang chủ</a>
             </li>
-            <li class="breadcrumb-item active text-white">
+            <li class="breadcrumb-item active text-dark">
               {{product.category.name || 'Máy bơm'}}
             </li>
           </ol>
         </nav>
 
-        <h1 class="fw-bold title-gradient mb-3">{{product.name}}</h1>
+        <h1 class="fw-bold mb-3">{{product.name}}</h1>
         <p class="text-muted small mb-4">
-          Mã sản phẩm: <span class="badge" style="background: rgba(255,255,255,0.1)">{{product.id}}</span> |
-          Thương hiệu: <strong style="color: var(--accent);">{{product.brand}}</strong>
+          Mã sản phẩm: <span class="badge bg-light text-muted border">{{product.id}}</span> |
+          Thương hiệu: <strong class="text-primary">{{product.brand}}</strong>
         </p>
 
-        <div class="d-flex align-items-center mb-4 pb-4 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
-          <h2 class="fw-bold mb-0 me-3" style="color: var(--accent); font-size: 2.2rem;">
+        <div class="d-flex align-items-center mb-4 pb-4 border-bottom">
+          <h2 class="fw-bold mb-0 me-3 text-primary" style="font-size: 2.2rem;">
             {{product.price | number:0}} VNĐ
           </h2>
-          <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; border: 1px solid #10b981;" ng-if="product.quantity > 0">
+          <span class="badge bg-success-subtle text-success border border-success-subtle" ng-if="product.quantity > 0">
             <i class="bi bi-check-circle"></i> Còn hàng
           </span>
-          <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid var(--danger);" ng-if="product.quantity <= 0">
+          <span class="badge bg-danger-subtle text-danger border border-danger-subtle" ng-if="product.quantity <= 0">
             <i class="bi bi-x-circle"></i> Hết hàng
           </span>
         </div>
 
-        <div class="mb-5 rounded-3 p-4" style="background: rgba(56, 189, 248, 0.05); border-left: 4px solid var(--accent);">
-          <h6 class="fw-bold mb-2" style="color: var(--accent);">Mô tả sản phẩm:</h6>
+        <div class="mb-5 rounded-3 p-4 bg-light border-start border-4 border-primary">
+          <h6 class="fw-bold mb-2 text-primary">Mô tả sản phẩm:</h6>
           <p class="mb-0 text-muted" style="font-style: italic; line-height: 1.6;">
             {{product.description}}
           </p>
@@ -53,13 +53,13 @@
 
         <div class="row gx-3 mb-5">
           <div class="col-10">
-            <button class="btn-gradient w-100 rounded-3 py-3 fw-bold fs-5" ng-click="addToCart(product)" ng-disabled="product.quantity <= 0">
+            <button class="btn-gradient w-100 rounded-3 py-3 fw-bold fs-5 shadow-sm" ng-click="addToCart(product)" ng-disabled="product.quantity <= 0">
               <i class="bi bi-cart-plus me-2"></i> THÊM VÀO GIỎ HÀNG
             </button>
           </div>
           <div class="col-2">
-            <button class="btn btn-outline-light w-100 rounded-3 h-100" style="border-color: rgba(255,255,255,0.2);">
-              <i class="bi bi-heart fs-4" style="color: var(--danger);"></i>
+            <button class="btn btn-outline-secondary w-100 rounded-3 h-100 shadow-sm">
+              <i class="bi bi-heart fs-4 text-danger"></i>
             </button>
           </div>
         </div>
@@ -70,12 +70,12 @@
   <!-- Detailed Specifications Section -->
   <div class="row mt-4">
     <div class="col-12">
-      <div class="glass-card p-4 p-md-5">
+      <div class="glass-card p-4 p-md-5 shadow-sm">
         <h4 class="fw-bold mb-4">
-          <i class="bi bi-gear-fill me-2" style="color: var(--accent);"></i> Thông số kỹ thuật chi tiết
+          <i class="bi bi-gear-fill me-2 text-primary"></i> Thông số kỹ thuật chi tiết
         </h4>
         <div class="table-responsive">
-          <table class="table table-striped table-hover align-middle mb-0">
+          <table class="table table-hover align-middle mb-0">
             <tbody>
               <tr ng-if="product.powerKw || product.powerHp">
                 <td class="text-muted w-40 py-3">Công suất</td>
@@ -143,19 +143,19 @@
   <!-- Review Section -->
   <div class="row mt-4">
     <div class="col-12">
-      <div class="glass-card p-4 p-md-5">
+      <div class="glass-card p-4 p-md-5 shadow-sm">
 
         <div class="review-section">
           <h4 class="fw-bold mb-4">
-            <i class="bi bi-chat-left-text-fill me-2" style="color: var(--accent);"></i> Đánh giá sản phẩm
+            <i class="bi bi-chat-left-text-fill me-2 text-primary"></i> Đánh giá sản phẩm
           </h4>
 
           <!-- Review List -->
           <div class="review-list mb-5">
             <div ng-if="reviews.length == 0" class="text-muted italic">Chưa có đánh giá nào cho sản phẩm này.</div>
-            <div ng-repeat="review in reviews" class="mb-4 pb-4 border-bottom" style="border-color: rgba(255,255,255,0.05) !important;">
+            <div ng-repeat="review in reviews" class="mb-4 pb-4 border-bottom">
               <div class="d-flex justify-content-between mb-2">
-                <strong class="text-white">{{review.user.fullName || review.user.username}}</strong>
+                <strong class="text-main">{{review.user.fullName || review.user.username}}</strong>
                 <span class="text-muted small">{{review.createdAt | date:'dd/MM/yyyy HH:mm'}}</span>
               </div>
               <div class="mb-2">
@@ -163,14 +163,14 @@
               </div>
               <p class="text-muted mb-2">{{review.comment}}</p>
               <div ng-if="review.image" class="review-image-container mt-2">
-                <img ng-src="http://localhost:8080/uploads/reviews/{{review.image}}" class="rounded-3 shadow-sm" style="max-width: 150px; cursor: pointer;" ng-click="openImage(review.image)">
+                <img ng-src="http://localhost:8080/uploads/reviews/{{review.image}}" class="rounded-3 shadow-sm border" style="max-width: 150px; cursor: pointer;" ng-click="openImage(review.image)">
               </div>
             </div>
           </div>
 
           <!-- Review Form -->
-          <div ng-if="isLoggedIn" class="review-form p-4 rounded-3" style="background: rgba(255,255,255,0.03);">
-            <h5 class="mb-3 text-white">Viết đánh giá của bạn</h5>
+          <div ng-if="isLoggedIn" class="review-form p-4 rounded-3 bg-light border shadow-sm">
+            <h5 class="mb-3 text-main fw-bold">Viết đánh giá của bạn</h5>
             <form ng-submit="sendReview()">
               <div class="mb-4">
                 <label class="form-label text-muted small d-block mb-2">Đánh giá của bạn</label>
@@ -190,14 +190,14 @@
                 <label class="form-label text-muted small">Hình ảnh đính kèm</label>
                 <div class="file-upload-wrapper">
                   <div class="file-upload-box" onclick="document.getElementById('reviewImage').click()">
-                    <i class="bi bi-cloud-arrow-up"></i>
-                    <div class="upload-text">Kéo thả hoặc nhấp để tải ảnh lên</div>
+                    <i class="bi bi-cloud-arrow-up text-primary"></i>
+                    <div class="upload-text text-muted">Kéo thả hoặc nhấp để tải ảnh lên</div>
                     <div class="text-muted x-small mt-1">Chấp nhận JPG, PNG, WEBP</div>
                   </div>
                   <input type="file" id="reviewImage" accept="image/*" class="d-none" onchange="angular.element(this).scope().onFileSelect(this)">
                   
                   <div class="file-preview-container" ng-if="previewImage">
-                    <div class="file-preview-item">
+                    <div class="file-preview-item border">
                       <img ng-src="{{previewImage}}">
                       <button type="button" class="remove-btn" ng-click="removeFile()">
                         <i class="bi bi-x"></i>
@@ -206,13 +206,13 @@
                   </div>
                 </div>
               </div>
-              <button type="submit" class="btn btn-gradient px-5 py-2 rounded-pill fw-bold">
+              <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill fw-bold shadow-sm">
                 <i class="bi bi-send-fill me-2"></i> Gửi đánh giá
               </button>
             </form>
           </div>
-          <div ng-if="!isLoggedIn" class="alert alert-info border-0" style="background: rgba(13, 202, 240, 0.1); color: #0dcaf0;">
-            Vui lòng <a href="#!/login" class="fw-bold text-decoration-none" style="color: #0dcaf0;">đăng nhập</a> để gửi đánh giá.
+          <div ng-if="!isLoggedIn" class="alert alert-info border shadow-sm">
+            Vui lòng <a href="#!/login" class="fw-bold text-decoration-none text-primary">đăng nhập</a> để gửi đánh giá.
           </div>
         </div>
       </div>

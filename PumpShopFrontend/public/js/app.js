@@ -119,7 +119,7 @@ app.config(function ($routeProvider, $httpProvider) {
     .when("/", { templateUrl: "views/home.html", controller: "HomeController" })
     .when("/product/:id", { templateUrl: "views/product-detail.html", controller: "DetailController" })
     .when("/cart", { templateUrl: "views/cart.html", controller: "CartController" })
-    .when("/checkout", { templateUrl: "views/checkout.html", controller: "CheckoutController", requireAuth: true })
+    .when("/checkout", { templateUrl: "views/checkout.html", controller: "CheckoutController" })
     .when("/lookup", { templateUrl: "views/lookup.html", controller: "LookupController" })
     .when("/login", { templateUrl: "views/login.html", controller: "LoginController" })
     .when("/register", { templateUrl: "views/register.html", controller: "RegisterController" })
@@ -131,6 +131,27 @@ app.config(function ($routeProvider, $httpProvider) {
 
 // ---- Run Block ----
 app.run(function ($rootScope, $location, AuthService) {
+  // Theme management
+  $rootScope.isDarkMode = localStorage.getItem('theme') === 'dark';
+  
+  $rootScope.applyTheme = function() {
+    if ($rootScope.isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
+  $rootScope.toggleTheme = function() {
+    $rootScope.isDarkMode = !$rootScope.isDarkMode;
+    $rootScope.applyTheme();
+  };
+
+  // Initialize theme
+  $rootScope.applyTheme();
+
   $rootScope.$on('$routeChangeStart', function (event, next) {
     $rootScope.currentUser = AuthService.getUser();
     $rootScope.isLoggedIn = AuthService.isLoggedIn();
@@ -351,10 +372,19 @@ app.controller("CartController", function ($scope, $rootScope, $location, CartSe
 });
 
 // CheckoutController
-app.controller("CheckoutController", function ($scope, $http, $location, CartService, NotificationService) {
+app.controller("CheckoutController", function ($scope, $http, $location, CartService, NotificationService, AuthService) {
   $scope.cart = CartService.getCart() || [];
   $scope.totalAmount = CartService.amount() || 0;
   $scope.order = { receiverName: "", receiverPhone: "", deliveryAddress: "", orderDetails: [] };
+
+  // Auto-fill if logged in
+  if (AuthService.isLoggedIn()) {
+    $http.get("http://localhost:8080/api/v1/auth/me").then(res => {
+      $scope.order.receiverName = res.data.fullName;
+      $scope.order.receiverPhone = res.data.phone;
+      $scope.order.deliveryAddress = res.data.address;
+    }).catch(err => console.error("Lỗi lấy thông tin người dùng:", err));
+  }
 
   $scope.confirmOrder = function () {
     if ($scope.cart.length === 0) {
@@ -388,28 +418,68 @@ app.controller("CheckoutController", function ($scope, $http, $location, CartSer
 });
 
 // LookupController
-app.controller("LookupController", function ($scope, $http, NotificationService) {
-  $scope.lookupData = { id: '', phone: '' };
+app.controller("LookupController", function ($scope, $http, $routeParams, NotificationService) {
+  $scope.lookupData = { id: $routeParams.id || '', phone: $routeParams.phone || '' };
+
+  $scope.getStatusLabel = function (status) {
+    const map = {
+      'PENDING': 'Đang xử lý',
+      'SHIPPING': 'Đang giao hàng',
+      'COMPLETED': 'Đã hoàn thành',
+      'CANCELLED': 'Đã hủy'
+    };
+    return map[status] || status || 'Đang chờ';
+  };
+
+  $scope.getStepIndex = function (status) {
+    const map = {
+      'PENDING': 1,
+      'SHIPPING': 2,
+      'COMPLETED': 3
+    };
+    return map[status] || 0;
+  };
+
   $scope.lookupOrder = function () {
     if (!$scope.lookupData.id || !$scope.lookupData.phone) return;
     $scope.isLoading = true;
+    $scope.errorMessage = null; // Clear previous error
     var url = `http://localhost:8080/api/v1/orders/lookup?id=${$scope.lookupData.id}&phone=${encodeURIComponent($scope.lookupData.phone)}`;
-    $http.get(url).then(res => { $scope.orderResult = res.data; })
+    $http.get(url).then(res => {
+      $scope.orderResult = res.data;
+    })
       .catch(err => {
+        $scope.orderResult = null; // Clear previous result
         $scope.errorMessage = err.status === 404 ? 'Không tìm thấy đơn hàng.' : 'Lỗi kết nối máy chủ.';
         NotificationService.show($scope.errorMessage, "danger");
       })
       .finally(() => $scope.isLoading = false);
   };
+
+  // Auto lookup if params are provided
+  if ($scope.lookupData.id && $scope.lookupData.phone) {
+    $scope.lookupOrder();
+  }
 });
 
 // LoginController
 app.controller('LoginController', function ($scope, $http, $location, AuthService, NotificationService) {
-  $scope.credentials = { username: '', password: '' };
+  // Load remembered username
+  const savedUsername = localStorage.getItem('remembered_username');
+  $scope.rememberMe = !!savedUsername;
+  $scope.credentials = { username: savedUsername || '', password: '' };
+
   $scope.login = function () {
     $scope.isLoading = true;
     $http.post('http://localhost:8080/api/v1/auth/login', $scope.credentials)
       .then(res => {
+        // Handle remember me
+        if ($scope.rememberMe) {
+          localStorage.setItem('remembered_username', $scope.credentials.username);
+        } else {
+          localStorage.removeItem('remembered_username');
+        }
+
         AuthService.saveSession(res.data);
         NotificationService.show("Chào mừng " + res.data.fullName + " trở lại!");
         $location.path('/');
@@ -445,7 +515,7 @@ app.controller('RegisterController', function ($scope, $http, $location, Notific
 });
 
 // ProfileController
-app.controller('ProfileController', function ($scope, $http, AuthService, NotificationService) {
+app.controller('ProfileController', function ($scope, $http, $location, AuthService, NotificationService) {
   $scope.activeSection = 'profile';
   $scope.userForm = {};
   $scope.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
@@ -512,8 +582,11 @@ app.controller('ProfileController', function ($scope, $http, AuthService, Notifi
   };
 
   $scope.viewOrderDetail = function (order) {
-    var details = order.orderDetails.map(d => `${d.product.name} x ${d.quantity}`).join('\n');
-    alert(`Chi tiết đơn hàng #${order.id}:\n\n${details}\n\nTổng cộng: ${order.totalAmount.toLocaleString()}đ`);
+    // Redirect to lookup page with parameters
+    $location.path('/lookup').search({
+      id: order.id,
+      phone: order.receiverPhone
+    });
   };
 
   $scope.loadProfile();

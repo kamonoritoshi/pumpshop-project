@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body ng-app="pumpApp">
+  <body ng-controller="MainController">
     <header class="header-section border-bottom sticky-top" style="backdrop-filter: blur(15px); z-index: 1050;">
       <div class="container header-content">
         <!-- Logo -->
@@ -35,8 +35,8 @@
               <i class="bi bi-search"></i>
             </span>
             <input type="text" class="form-control border-0 bg-transparent py-2 shadow-none" placeholder="Tìm kiếm máy bơm, linh kiện..." 
-                   ng-model="kw" ng-keypress="($event.which === 13)?search():0">
-            <button class="btn btn-primary rounded-3 px-4 fw-bold" ng-click="search()" style="margin: 2px;">Tìm kiếm</button>
+                   ng-model="globalKw" ng-keypress="($event.which === 13)?globalSearch():0">
+            <button class="btn btn-primary rounded-3 px-4 fw-bold" ng-click="globalSearch()" style="margin: 2px;">Tìm kiếm</button>
           </div>
         </div>
 
@@ -46,6 +46,18 @@
           <button class="btn btn-link text-muted p-2 hover-scale border-0 shadow-none" ng-click="toggleTheme()" title="Đổi màu theme">
             <i class="bi" ng-class="isDarkMode ? 'bi-sun-fill text-warning' : 'bi-moon-stars-fill'"></i>
           </button>
+
+          <!-- Wishlist Button -->
+          <a href="#!/wishlist" class="text-main text-decoration-none d-flex align-items-center gap-2 position-relative hover-scale me-2">
+            <div class="position-relative bg-light-custom rounded-circle p-2" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+              <i class="bi bi-heart fs-5 text-danger"></i>
+              <span class="badge bg-danger rounded-pill position-absolute" style="top:-5px; right:-5px; font-size: 0.65rem; border: 2px solid var(--card-bg);">{{wishlistCount || 0}}</span>
+            </div>
+            <div class="d-none d-xl-block">
+              <div class="small text-muted mb-0" style="line-height: 1">Yêu thích</div>
+              <div class="fw-bold small">Bộ sưu tập</div>
+            </div>
+          </a>
 
           <a href="#!/cart" class="text-main text-decoration-none d-flex align-items-center gap-2 position-relative hover-scale">
             <div class="position-relative bg-light-custom rounded-circle p-2" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
@@ -107,13 +119,13 @@
         <div class="collapse navbar-collapse" id="navMenu">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link py-3 px-0 me-4 active" href="#!/"><i class="bi bi-grid me-2"></i>Tất cả danh mục</a>
+              <a class="nav-link py-3 px-0 me-4" ng-class="{ active: isActive('/') }" href="#!/"><i class="bi bi-house me-1"></i>Trang chủ</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link py-3 px-0 me-4" href="#!/"><i class="bi bi-house me-1"></i>Trang chủ</a>
+              <a class="nav-link py-3 px-0 me-4" ng-class="{ active: isActive('/products') }" href="#!/products"><i class="bi bi-droplet-half me-1"></i>Sản phẩm</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link py-3 px-0 me-4" href="#!/lookup"><i class="bi bi-search me-1"></i>Tra cứu đơn hàng</a>
+              <a class="nav-link py-3 px-0 me-4" ng-class="{ active: isActive('/lookup') }" href="#!/lookup"><i class="bi bi-search me-1"></i>Tra cứu đơn hàng</a>
             </li>
           </ul>
           <div class="text-muted small">

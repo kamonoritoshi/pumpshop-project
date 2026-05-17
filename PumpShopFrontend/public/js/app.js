@@ -113,24 +113,94 @@ app.factory("CartService", function ($rootScope) {
   return service;
 });
 
+// ---- WishlistService ----
+app.factory("WishlistService", function ($rootScope, $http, AuthService) {
+  var wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  var service = {
+    getWishlist: function () { return wishlist; },
+    add: function (product) {
+      if (!wishlist.some(p => p.id === product.id)) {
+        wishlist.push(product);
+        this.save();
+        if (AuthService.isLoggedIn()) {
+          $http.post("http://localhost:8080/api/v1/wishlist/" + product.id)
+            .catch(err => console.error("Lỗi đồng bộ thêm yêu thích:", err));
+        }
+      }
+    },
+    remove: function (id) {
+      wishlist = wishlist.filter(p => p.id !== id);
+      this.save();
+      if (AuthService.isLoggedIn()) {
+        $http.delete("http://localhost:8080/api/v1/wishlist/" + id)
+          .catch(err => console.error("Lỗi đồng bộ xóa yêu thích:", err));
+      }
+    },
+    toggle: function (product) {
+      if (this.has(product.id)) {
+        this.remove(product.id);
+        return false;
+      } else {
+        this.add(product);
+        return true;
+      }
+    },
+    has: function (id) {
+      return wishlist.some(p => p.id === id);
+    },
+    save: function () {
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      $rootScope.wishlistCount = this.count();
+    },
+    count: function () { return wishlist.length; },
+    clear: function () { wishlist = []; this.save(); },
+    sync: function () {
+      if (!AuthService.isLoggedIn()) return;
+      $http.get("http://localhost:8080/api/v1/wishlist").then(function (res) {
+        var dbProducts = res.data.map(item => item.product);
+        wishlist.forEach(function (localProduct) {
+          if (!dbProducts.some(p => p.id === localProduct.id)) {
+            $http.post("http://localhost:8080/api/v1/wishlist/" + localProduct.id)
+              .catch(err => console.error("Lỗi đẩy sản phẩm lên DB khi sync:", err));
+            dbProducts.push(localProduct);
+          }
+        });
+        wishlist = dbProducts;
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        $rootScope.wishlistCount = wishlist.length;
+      }).catch(function (err) {
+        console.error("Lỗi đồng bộ danh sách yêu thích:", err);
+      });
+    }
+  };
+  $rootScope.wishlistCount = service.count();
+  if (AuthService.isLoggedIn()) {
+    service.sync();
+  }
+  return service;
+});
+
 // ---- Config ----
 app.config(function ($routeProvider, $httpProvider) {
+  var v = new Date().getTime();
   $routeProvider
-    .when("/", { templateUrl: "views/home.html", controller: "HomeController" })
-    .when("/product/:id", { templateUrl: "views/product-detail.html", controller: "DetailController" })
-    .when("/cart", { templateUrl: "views/cart.html", controller: "CartController" })
-    .when("/checkout", { templateUrl: "views/checkout.html", controller: "CheckoutController" })
-    .when("/lookup", { templateUrl: "views/lookup.html", controller: "LookupController" })
-    .when("/login", { templateUrl: "views/login.html", controller: "LoginController" })
-    .when("/register", { templateUrl: "views/register.html", controller: "RegisterController" })
-    .when("/profile", { templateUrl: "views/profile.html", controller: "ProfileController", requireAuth: true })
+    .when("/", { templateUrl: "views/home.html?v=" + v, controller: "HomeController" })
+    .when("/products", { templateUrl: "views/products.html?v=" + v, controller: "ProductsController" })
+    .when("/product/:id", { templateUrl: "views/product-detail.html?v=" + v, controller: "DetailController" })
+    .when("/cart", { templateUrl: "views/cart.html?v=" + v, controller: "CartController" })
+    .when("/checkout", { templateUrl: "views/checkout.html?v=" + v, controller: "CheckoutController" })
+    .when("/lookup", { templateUrl: "views/lookup.html?v=" + v, controller: "LookupController" })
+    .when("/login", { templateUrl: "views/login.html?v=" + v, controller: "LoginController" })
+    .when("/register", { templateUrl: "views/register.html?v=" + v, controller: "RegisterController" })
+    .when("/profile", { templateUrl: "views/profile.html?v=" + v, controller: "ProfileController", requireAuth: true })
+    .when("/wishlist", { templateUrl: "views/wishlist.html?v=" + v, controller: "WishlistController" })
     .otherwise({ redirectTo: "/" });
 
   $httpProvider.interceptors.push('AuthInterceptor');
 });
 
 // ---- Run Block ----
-app.run(function ($rootScope, $location, AuthService) {
+app.run(function ($rootScope, $location, AuthService, WishlistService) {
   // Theme management
   $rootScope.isDarkMode = localStorage.getItem('theme') === 'dark';
   
@@ -162,27 +232,97 @@ app.run(function ($rootScope, $location, AuthService) {
   });
   $rootScope.logout = function () {
     AuthService.logout();
+    WishlistService.clear();
     $rootScope.currentUser = null;
     $rootScope.isLoggedIn = false;
     $location.path('/');
   };
 });
 
-// HomeController
-app.controller("HomeController", function ($scope, $http, $location, CartService, NotificationService) {
-  $scope.products = [];
+// ---- MainController ----
+app.controller("MainController", function ($scope, $location, AuthService) {
+  $scope.globalKw = "";
+  
+  $scope.globalSearch = function () {
+    if ($scope.globalKw) {
+      $location.path("/products").search({ kw: $scope.globalKw });
+    } else {
+      $location.path("/products").search({});
+    }
+  };
+
+  $scope.isActive = function (viewLocation) {
+    if (viewLocation === '/') {
+      return $location.path() === '/';
+    }
+    return $location.path().indexOf(viewLocation) === 0;
+  };
+
+  // Sync global search input when URL changes
+  $scope.$on('$routeChangeSuccess', function () {
+    $scope.globalKw = $location.search().kw || "";
+  });
+});
+
+// HomeController (Landing Page)
+app.controller("HomeController", function ($scope, $http, $location, CartService, NotificationService, WishlistService) {
   $scope.categories = [];
-  $scope.kw = "";
+  $scope.featuredProducts = [];
+  $scope.consultationForm = { name: "", phone: "", message: "" };
+
+  // Load root categories for landing page showcases
+  $http.get("http://localhost:8080/api/v1/products/categories").then(res => {
+    $scope.categories = res.data.slice(0, 4);
+  }).catch(err => console.error("Lỗi lấy danh mục:", err));
+
+  // Load featured products (top 4)
+  $http.get("http://localhost:8080/api/v1/products", { params: { page: 0, size: 4 } }).then(res => {
+    $scope.featuredProducts = res.data.content;
+  }).catch(err => console.error("Lỗi lấy sản phẩm nổi bật:", err));
+
+  $scope.submitConsultation = function () {
+    if (!$scope.consultationForm.name || !$scope.consultationForm.phone) {
+      NotificationService.show("Vui lòng điền đầy đủ họ tên và số điện thoại!", "warning");
+      return;
+    }
+    NotificationService.show("Yêu cầu của bạn đã được tiếp nhận. Đội ngũ kỹ thuật sẽ gọi lại trong 15 phút!", "success");
+    $scope.consultationForm = { name: "", phone: "", message: "" };
+  };
+
+  $scope.addToCart = function (product) {
+    CartService.add(product);
+    NotificationService.show("Đã thêm " + product.name + " vào giỏ hàng");
+  };
+
+  $scope.addToWishlist = function (product) {
+    WishlistService.add(product);
+    NotificationService.show("Đã thêm " + product.name + " vào danh sách yêu thích!", "info");
+  };
+
+  $scope.goToDetail = function (id) {
+    if (!id) return;
+    $location.path("/product/" + id.replace(/\//g, "_"));
+  };
+
+  $scope.goToCategory = function (categoryId) {
+    $location.path("/products").search({ categoryId: categoryId });
+  };
+});
+
+// ProductsController (Products Shop & Search Results)
+app.controller("ProductsController", function ($scope, $http, $routeParams, $location, CartService, NotificationService, WishlistService) {
+  $scope.categories = [];
+  $scope.allBrands = [];
+  $scope.kw = $routeParams.kw || "";
+  
   $scope.filterData = {
-    categoryId: null,
-    brands: [],
-    minPower: null,
-    maxPower: null,
+    categoryId: $routeParams.categoryId ? parseInt($routeParams.categoryId) : null,
+    brands: $routeParams.brand ? (angular.isArray($routeParams.brand) ? $routeParams.brand : [$routeParams.brand]) : [],
+    minPower: $routeParams.minPower ? parseFloat($routeParams.minPower) : null,
+    maxPower: $routeParams.maxPower ? parseFloat($routeParams.maxPower) : null,
     minHead: null,
     maxHead: null
   };
-
-  $scope.allBrands = [];
 
   $scope.expandedCategories = {};
   $scope.toggleCategory = function(id, event) {
@@ -196,6 +336,16 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
   // Load root categories for filter tree
   $http.get("http://localhost:8080/api/v1/products/categories").then(res => {
     $scope.categories = res.data;
+    // Auto-expand category paths if active
+    if ($scope.filterData.categoryId) {
+      $scope.categories.forEach(cat => {
+        if (cat.id === $scope.filterData.categoryId) {
+          $scope.expandedCategories[cat.id] = true;
+        } else if (cat.children && cat.children.some(sub => sub.id === $scope.filterData.categoryId)) {
+          $scope.expandedCategories[cat.id] = true;
+        }
+      });
+    }
   }).catch(err => console.error("Lỗi lấy danh mục:", err));
 
   // Load unique brands
@@ -212,7 +362,7 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
 
   $scope.pager = {
     page: 0,
-    size: 8,
+    size: 9,
     count: 0,
     items: [],
 
@@ -249,6 +399,15 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
   $scope.search = function () {
     $scope.pager.page = 0;
     $scope.pager.init();
+    
+    // Sync browser URL parameters so user can copy and bookmark the URL
+    $location.search({
+      kw: $scope.kw || null,
+      categoryId: $scope.filterData.categoryId || null,
+      brand: ($scope.filterData.brands && $scope.filterData.brands.length > 0) ? $scope.filterData.brands : null,
+      minPower: $scope.filterData.minPower || null,
+      maxPower: $scope.filterData.maxPower || null
+    });
   };
 
   $scope.resetFilter = function() {
@@ -267,6 +426,11 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
     NotificationService.show("Đã thêm " + product.name + " vào giỏ hàng");
   };
 
+  $scope.addToWishlist = function (product) {
+    WishlistService.add(product);
+    NotificationService.show("Đã thêm " + product.name + " vào danh sách yêu thích!", "info");
+  };
+
   $scope.goToDetail = function (id) {
     if (!id) return;
     $location.path("/product/" + id.replace(/\//g, "_"));
@@ -274,7 +438,7 @@ app.controller("HomeController", function ($scope, $http, $location, CartService
 });
 
 // DetailController
-app.controller("DetailController", function ($scope, $http, $routeParams, $rootScope, CartService, NotificationService) {
+app.controller("DetailController", function ($scope, $http, $routeParams, $rootScope, CartService, NotificationService, WishlistService) {
   $http.get("http://localhost:8080/api/v1/products/" + $routeParams.id).then(function (response) {
     $scope.product = response.data;
     $rootScope.product = response.data;
@@ -296,7 +460,7 @@ app.controller("DetailController", function ($scope, $http, $routeParams, $rootS
 
     var formData = new FormData();
     var reviewData = {
-      productId: $routeParams.id,
+      productId: $scope.product.id,
       rating: $scope.reviewForm.rating,
       comment: $scope.reviewForm.comment
     };
@@ -348,6 +512,24 @@ app.controller("DetailController", function ($scope, $http, $routeParams, $rootS
   $scope.addToCart = function (product) {
     CartService.add(product);
     NotificationService.show("Đã thêm vào giỏ hàng!");
+  };
+
+  $scope.addToWishlist = function (product) {
+    WishlistService.add(product);
+    NotificationService.show("Đã thêm vào danh sách yêu thích!", "info");
+  };
+
+  $scope.isInWishlist = function (productId) {
+    return WishlistService.has(productId);
+  };
+
+  $scope.toggleWishlist = function (product) {
+    var added = WishlistService.toggle(product);
+    if (added) {
+      NotificationService.show("Đã thêm vào danh sách yêu thích!", "info");
+    } else {
+      NotificationService.show("Đã xóa khỏi danh sách yêu thích!", "warning");
+    }
   };
 });
 
@@ -463,7 +645,7 @@ app.controller("LookupController", function ($scope, $http, $routeParams, Notifi
 });
 
 // LoginController
-app.controller('LoginController', function ($scope, $http, $location, AuthService, NotificationService) {
+app.controller('LoginController', function ($scope, $http, $location, AuthService, NotificationService, WishlistService) {
   // Load remembered username
   const savedUsername = localStorage.getItem('remembered_username');
   $scope.rememberMe = !!savedUsername;
@@ -481,6 +663,7 @@ app.controller('LoginController', function ($scope, $http, $location, AuthServic
         }
 
         AuthService.saveSession(res.data);
+        WishlistService.sync(); // Sync wishlist immediately!
         NotificationService.show("Chào mừng " + res.data.fullName + " trở lại!");
         $location.path('/');
       })
@@ -590,4 +773,25 @@ app.controller('ProfileController', function ($scope, $http, $location, AuthServ
   };
 
   $scope.loadProfile();
+});
+
+// WishlistController
+app.controller("WishlistController", function ($scope, $rootScope, $location, WishlistService, CartService, NotificationService) {
+  $scope.wishlist = WishlistService.getWishlist();
+
+  $scope.removeFromWishlist = function (id) {
+    WishlistService.remove(id);
+    $scope.wishlist = WishlistService.getWishlist();
+    NotificationService.show("Đã xóa khỏi danh sách yêu thích!", "warning");
+  };
+
+  $scope.addToCart = function (product) {
+    CartService.add(product);
+    NotificationService.show("Đã thêm " + product.name + " vào giỏ hàng");
+  };
+
+  $scope.goToDetail = function (id) {
+    if (!id) return;
+    $location.path("/product/" + id.replace(/\//g, "_"));
+  };
 });

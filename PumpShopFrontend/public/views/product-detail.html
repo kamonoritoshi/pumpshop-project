@@ -58,8 +58,10 @@
             </button>
           </div>
           <div class="col-2">
-            <button class="btn btn-outline-secondary w-100 rounded-3 h-100 shadow-sm">
-              <i class="bi bi-heart fs-4 text-danger"></i>
+            <button class="btn btn-outline-secondary w-100 rounded-3 h-100 shadow-sm d-flex align-items-center justify-content-center"
+                    ng-click="toggleWishlist(product)"
+                    title="{{isInWishlist(product.id) ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích'}}">
+              <i class="bi fs-4 text-danger" ng-class="isInWishlist(product.id) ? 'bi-heart-fill' : 'bi-heart'"></i>
             </button>
           </div>
         </div>

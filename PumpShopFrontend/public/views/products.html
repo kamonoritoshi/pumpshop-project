@@ -1,0 +1,186 @@
+<div class="main-container">
+    <!-- Page Header and Search Query Indicator -->
+    <div class="glass-card p-4 mb-4 border-0 shadow-sm" style="border-radius: 20px; background: var(--card-bg);">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 class="fw-bold text-main mb-1">
+                    <span ng-if="kw">Kết quả tìm kiếm: <span class="text-primary">"{{kw}}"</span></span>
+                    <span ng-if="!kw">Cửa Hàng Máy Bơm Chính Hãng</span>
+                </h3>
+                <p class="text-muted mb-0 small">
+                    Khám phá danh mục thiết bị bơm công nghiệp & gia dụng nhập khẩu chất lượng cao.
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-outline-primary rounded-pill btn-sm px-4 py-2" ng-click="resetFilter()">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Đặt lại bộ lọc
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <!-- Categories Filter -->
+            <div class="glass-card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 16px;">
+                <div class="p-3 bg-primary text-white d-flex align-items-center justify-content-between">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-grid-fill me-2"></i> Danh mục</h6>
+                    <span class="badge bg-white text-primary rounded-circle" style="font-size: 0.75rem;">{{categories.length}}</span>
+                </div>
+                <div class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
+                    <button class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex align-items-center" 
+                            ng-class="{active: filterData.categoryId == null}"
+                            ng-click="setCategory(null)">
+                        <i class="bi bi-circle-fill me-3" style="font-size: 0.5rem;"></i> Tất cả máy bơm
+                    </button>
+                    
+                    <div ng-repeat="c in categories">
+                        <div class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex justify-content-between align-items-center category-item"
+                             ng-class="{active: filterData.categoryId == c.id}"
+                             ng-click="setCategory(c.id)">
+                            <span><i class="bi bi-chevron-right me-2 small opacity-50"></i> {{c.name}}</span>
+                            <i class="bi fs-small toggle-icon p-1" 
+                                ng-class="expandedCategories[c.id] ? 'bi-chevron-down' : 'bi-chevron-right'"
+                                ng-if="c.children.length > 0"
+                                ng-click="toggleCategory(c.id, $event)"></i>
+                        </div>
+                        
+                        <!-- Sub Categories -->
+                        <div class="sub-category-wrapper bg-light-custom" ng-if="c.children.length > 0 && expandedCategories[c.id]">
+                            <button class="list-group-item list-group-item-action border-0 ps-5 py-2 sub-category-item small bg-transparent text-main"
+                                    ng-repeat="sub in c.children"
+                                    ng-click="setCategory(sub.id)"
+                                    ng-class="{active: filterData.categoryId == sub.id}">
+                                {{sub.name}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Filter Card -->
+            <div class="glass-card border-0 shadow-sm overflow-hidden" style="border-radius: 16px;">
+                <div class="p-3 border-bottom bg-light-custom">
+                    <h6 class="mb-0 fw-bold text-muted text-uppercase tracking-wider"><i class="bi bi-funnel me-2"></i> Lọc sản phẩm</h6>
+                </div>
+                <div class="p-4">
+                    <!-- Brand Checkboxes -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted">THƯƠNG HIỆU</label>
+                        <div class="brand-list custom-scrollbar pe-2" style="max-height: 200px; overflow-y: auto;">
+                            <div class="form-check custom-check mb-2" ng-repeat="b in allBrands">
+                                <input class="form-check-input" type="checkbox" id="brand-{{$index}}" 
+                                       ng-checked="filterData.brands.indexOf(b) > -1"
+                                       ng-click="toggleBrand(b)">
+                                <label class="form-check-label small cursor-pointer text-main" for="brand-{{$index}}">
+                                    {{b}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Power Range (KW) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted">CÔNG SUẤT (KW)</label>
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <input type="number" class="form-control form-control-sm text-center px-1" 
+                                   ng-model="filterData.minPower" placeholder="Tối thiểu" ng-change="search()"/>
+                            <span class="text-muted small">─</span>
+                            <input type="number" class="form-control form-control-sm text-center px-1" 
+                                   ng-model="filterData.maxPower" placeholder="Tối đa" ng-change="search()"/>
+                        </div>
+                        <input type="range" class="form-range custom-range" min="0" max="100" step="0.5" 
+                               ng-model="filterData.maxPower" ng-change="search()">
+                    </div>
+
+                    <button class="btn btn-primary w-100 rounded-pill btn-sm py-2" ng-click="resetFilter()">
+                        <i class="bi bi-trash me-1"></i> Xóa tất cả bộ lọc
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid List -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold text-main mb-0">Danh sách thiết bị</h4>
+                <div class="badge bg-light-custom text-main border p-2 px-3 rounded-pill fw-normal">
+                    Đang hiển thị <span class="text-primary fw-bold">{{pager.items.length}}</span> sản phẩm
+                </div>
+            </div>
+
+            <!-- Product Items -->
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4" ng-repeat="p in pager.items">
+                    <div class="glass-card glass-card-hover h-100 border-0 shadow-sm d-flex flex-column overflow-hidden" style="border-radius: 16px;">
+                        <div class="position-relative p-3 bg-light-custom text-center" style="cursor: pointer; height: 200px;" ng-click="goToDetail(p.id)">
+                            <img ng-src="{{p.image}}" class="w-100 h-100 object-fit-contain" alt="{{p.name}}" style="transition: transform 0.5s ease;">
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <span class="badge bg-primary rounded-pill px-2 py-1 small">{{p.brand}}</span>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-2 d-flex flex-column flex-grow-1">
+                            <h5 class="product-title mb-2" style="font-size: 0.95rem; font-weight: 600; line-height: 1.5; min-height: 2.80rem;">
+                                {{p.name}}
+                            </h5>
+                            <div class="d-flex align-items-end justify-content-between mt-auto pt-3 border-top">
+                                <div>
+                                    <div class="small text-muted mb-1" style="font-size: 0.75rem;">Giá chính hãng</div>
+                                    <div class="fw-bold fs-5 text-primary">{{p.price | number}}đ</div>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-outline-danger rounded-circle p-2 d-flex align-items-center justify-content-center hover-up" 
+                                            ng-click="addToWishlist(p)" style="width: 40px; height: 40px;" title="Yêu thích">
+                                        <i class="bi bi-heart fs-5"></i>
+                                    </button>
+                                    <button class="btn btn-primary rounded-circle p-2 d-flex align-items-center justify-content-center hover-up" 
+                                            ng-click="addToCart(p)" style="width: 40px; height: 40px;" title="Thêm vào giỏ hàng">
+                                        <i class="bi bi-cart-plus fs-5"></i>
+                                    </button>
+                                    <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center border hover-up" 
+                                            ng-click="goToDetail(p.id)" style="width: 40px; height: 40px;" title="Xem chi tiết">
+                                        <i class="bi bi-eye fs-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination Control -->
+            <div class="d-flex justify-content-center mt-4 mb-5" ng-if="pager.count > 0">
+                <nav>
+                    <ul class="pagination pagination-md">
+                        <li class="page-item" ng-class="{disabled: pager.page == 0}">
+                            <a class="page-link shadow-sm mx-1 rounded-circle cursor-pointer" ng-click="pager.first()"><i class="bi bi-chevron-double-left"></i></a>
+                        </li>
+                        <li class="page-item" ng-class="{disabled: pager.page == 0}">
+                            <a class="page-link shadow-sm mx-1 rounded-circle cursor-pointer" ng-click="pager.prev()"><i class="bi bi-chevron-left"></i></a>
+                        </li>
+                        
+                        <li class="page-item active mx-1">
+                            <span class="page-link rounded-circle">{{pager.page + 1}} / {{pager.count}}</span>
+                        </li>
+
+                        <li class="page-item" ng-class="{disabled: pager.page >= pager.count - 1}">
+                            <a class="page-link shadow-sm mx-1 rounded-circle cursor-pointer" ng-click="pager.next()"><i class="bi bi-chevron-right"></i></a>
+                        </li>
+                        <li class="page-item" ng-class="{disabled: pager.page >= pager.count - 1}">
+                            <a class="page-link shadow-sm mx-1 rounded-circle cursor-pointer" ng-click="pager.last()"><i class="bi bi-chevron-double-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <!-- No Products Found Message -->
+            <div class="text-center py-5" ng-if="pager.items.length == 0">
+                <div class="display-1 text-muted opacity-25 mb-3"><i class="bi bi-search"></i></div>
+                <h4 class="text-muted">Không tìm thấy sản phẩm nào phù hợp</h4>
+                <p class="text-muted small">Hãy thử tìm kiếm với từ khóa khác hoặc xóa bớt bộ lọc.</p>
+                <button class="btn btn-primary rounded-pill px-4 mt-3" ng-click="resetFilter()">Xóa bộ lọc</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -13,7 +13,10 @@ import com.pumpshop.entity.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
 	@Query("SELECT p FROM Product p WHERE " +
-	       "(:kw IS NULL OR LOWER(CAST(p.name AS string)) LIKE LOWER(CAST(CONCAT('%', :kw, '%') AS string)) OR LOWER(CAST(p.brand AS string)) LIKE LOWER(CAST(CONCAT('%', :kw, '%') AS string)) OR LOWER(CAST(p.description AS string)) LIKE LOWER(CAST(CONCAT('%', :kw, '%') AS string))) AND " +
+	       "(CAST(:kw AS string) IS NULL OR " +
+	       " LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:kw AS string), '%')) OR " +
+	       " LOWER(p.brand) LIKE LOWER(CONCAT('%', CAST(:kw AS string), '%')) OR " +
+	       " LOWER(p.description) LIKE LOWER(CONCAT('%', CAST(:kw AS string), '%'))) AND " +
 	       "(:categoryIds IS NULL OR p.category.id IN :categoryIds) AND " +
 	       "(:brands IS NULL OR p.brand IN :brands) AND " +
 	       "(:minPower IS NULL OR p.powerKw >= :minPower) AND " +

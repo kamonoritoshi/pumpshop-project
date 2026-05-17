@@ -1,178 +1,332 @@
 <div class="main-container">
-    <!-- Main Banner Section -->
-    <div class="banner-main border-0 shadow-lg mb-5">
-        <div class="banner-content d-flex flex-column justify-content-center">
-            <h6 class="text-primary fw-bold text-uppercase mb-3 tracking-widest" style="letter-spacing: 0.1em;">Bộ sưu tập 2024</h6>
-            <h1 class="display-4 fw-bold text-main mb-4">Máy Bơm Công Nghiệp <br><span class="text-primary">Đẳng Cấp & Hiệu Suất</span></h1>
-            <p class="text-muted fs-5 mb-5 lead">
-                Độ bền vượt trội, tiết kiệm điện năng tối đa. <br>
-                Giải pháp toàn diện cho mọi công trình thủy lợi.
+    <!-- 1. HERO BANNER SECTION -->
+    <div class="banner-main border-0 shadow-lg mb-5" style="border-radius: 24px; overflow: hidden; background: var(--card-bg);">
+        <div class="banner-content d-flex flex-column justify-content-center py-5 px-4 px-md-5">
+            <h6 class="text-primary fw-bold text-uppercase mb-3 tracking-widest" style="letter-spacing: 0.15em; font-size: 0.85rem;">
+                Giải Pháp Bơm Toàn Diện
+            </h6>
+            <h1 class="display-4 fw-bold text-main mb-4" style="line-height: 1.15; font-size: calc(1.8rem + 1.5vw);">
+                Hệ Thống Máy Bơm <br class="d-none d-md-block">
+                <span class="text-primary">Đẳng Cấp & Hiệu Suất</span>
+            </h1>
+            <p class="text-muted fs-5 mb-5 lead" style="max-width: 500px; font-size: 1rem; line-height: 1.7;">
+                Nhập khẩu chính hãng từ các tập đoàn danh tiếng. Tiết kiệm điện năng 30%, vận hành bền bỉ vượt thời gian, bảo hành 24 tháng trọn gói.
             </p>
-            <div class="d-flex gap-3">
-                <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg hover-up">
-                    MUA NGAY
-                </button>
-                <button class="btn btn-outline-dark btn-lg rounded-pill px-5 py-3 fw-bold hover-up">
-                    TƯ VẤN MIỄN PHÍ
-                </button>
+            <div class="d-flex flex-column flex-sm-row gap-3">
+                <a href="#!/products" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow hover-up text-decoration-none text-center">
+                    MUA NGAY <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+                <a href="#consultation-section" class="btn btn-outline-dark btn-lg rounded-pill px-5 py-3 fw-bold hover-up text-center">
+                    TƯ VẤN KỸ THUẬT
+                </a>
             </div>
         </div>
         <div class="banner-image-container d-none d-lg-block position-relative" style="flex: 1; overflow: hidden; background: var(--bg-color);">
             <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=1000" 
-                 class="w-100 h-100 object-fit-cover" alt="Industrial Pump" style="opacity: 0.8;">
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, var(--card-bg) 0%, transparent 20%);"></div>
+                 class="w-100 h-100 object-fit-cover" alt="Industrial Pump Systems" style="opacity: 0.85; filter: contrast(1.05);">
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, var(--card-bg) 0%, transparent 25%);"></div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Sidebar filters -->
-        <div class="col-md-3 mb-4">
-            <div class="glass-card border-0 shadow-sm mb-4 overflow-hidden">
-                <div class="p-3 bg-primary text-white">
-                    <h6 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2"></i> Danh mục sản phẩm</h6>
+    <!-- 2. INTRODUCTION / ABOUT US SECTION -->
+    <div class="row align-items-center mb-5 py-4">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="position-relative p-2" style="border-radius: 20px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800" 
+                     class="w-100 h-100 object-fit-cover rounded-4 shadow-md" alt="Pump Shop Company" style="min-height: 380px;">
+                <div class="position-absolute bottom-0 start-0 m-4 p-4 glass-card border-0 shadow-lg text-start" style="border-radius: 16px; background: rgba(37, 99, 235, 0.9); color: #fff; max-width: 280px;">
+                    <div class="display-5 fw-bold text-white mb-0">10+</div>
+                    <div class="small fw-semibold text-uppercase tracking-wider" style="color: rgba(255,255,255,0.8);">Năm Kiến Tạo Uy Tín</div>
                 </div>
-                <div class="list-group list-group-flush">
-                    <button class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex align-items-center" 
-                            ng-class="{active: filterData.categoryId == null}"
-                            ng-click="setCategory(null)">
-                        <i class="bi bi-grid-fill me-3"></i> Tất cả máy bơm
-                    </button>
-                    
-                    <div ng-repeat="c in categories">
-                        <div class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex justify-content-between align-items-center category-item"
-                             ng-class="{active: filterData.categoryId == c.id}"
-                             ng-click="setCategory(c.id)">
-                            <span><i class="bi bi-check2-circle me-3 opacity-50"></i> {{c.name}}</span>
-                            <i class="bi fs-small toggle-icon" 
-                               ng-class="expandedCategories[c.id] ? 'bi-chevron-down' : 'bi-chevron-right'"
-                               ng-if="c.children.length > 0"
-                               ng-click="toggleCategory(c.id, $event)"></i>
+            </div>
+        </div>
+        <div class="col-lg-6 ps-lg-5 text-start">
+            <h6 class="text-primary fw-bold text-uppercase mb-2 tracking-widest" style="font-size: 0.8rem;">VỀ CHÚNG TÔI</h6>
+            <h2 class="fw-bold text-main mb-4" style="font-size: 2rem;">Thương Hiệu Phân Phối Máy Bơm Nước Hàng Đầu</h2>
+            <p class="text-muted mb-4" style="line-height: 1.7;">
+                Pump Shop tự hào là đối tác chiến lược và nhà phân phối ủy quyền của các thương hiệu máy bơm danh tiếng toàn cầu như <strong>Lepono, APP, Hanil, Hitachi, Astralpool...</strong>. Chúng tôi mang đến các dòng sản phẩm máy bơm gia đình, tăng áp và bơm công nghiệp với chất lượng chuẩn quốc tế.
+            </p>
+            <p class="text-muted mb-4" style="line-height: 1.7;">
+                Hơn cả việc bán sản phẩm, Pump Shop đồng hành cùng doanh nghiệp và gia đình để thiết kế hệ thống cấp thoát nước, tối ưu hóa lưu lượng, đảm bảo an toàn vận hành tuyệt đối với chi phí điện năng thấp nhất.
+            </p>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary-light text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
+                            <i class="bi bi-patch-check-fill fs-5"></i>
                         </div>
-                        
-                        <div class="sub-category-wrapper bg-light-custom" ng-if="c.children.length > 0 && expandedCategories[c.id]">
-                            <button class="list-group-item list-group-item-action border-0 ps-5 py-2 sub-category-item small bg-transparent text-main"
-                                    ng-repeat="sub in c.children"
-                                    ng-click="setCategory(sub.id)"
-                                    ng-class="{active: filterData.categoryId == sub.id}">
-                                {{sub.name}}
-                            </button>
+                        <div>
+                            <div class="fw-bold text-main mb-0">100% Chính Hãng</div>
+                            <div class="small text-muted">Đầy đủ chứng từ CO, CQ</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary-light text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px;">
+                            <i class="bi bi-shield-fill-check fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-main mb-0">Bảo Hành Vàng 24T</div>
+                            <div class="small text-muted">Bảo dưỡng định kỳ 24/7</div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="glass-card border-0 shadow-sm overflow-hidden">
-                <div class="p-3 border-bottom bg-light-custom">
-                    <h6 class="mb-0 fw-bold text-muted text-uppercase tracking-wider"><i class="bi bi-funnel me-2"></i> Bộ lọc nâng cao</h6>
+    <!-- 3. CORE VALUES / KEY FEATURES SECTION -->
+    <div class="text-center mb-5 py-3">
+        <h6 class="text-primary fw-bold text-uppercase mb-2 tracking-widest" style="font-size: 0.8rem;">GIÁ TRỊ KHÁC BIỆT</h6>
+        <h2 class="fw-bold text-main mb-3">Tại Sao Kỹ Sư Tin Chọn Pump Shop?</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px; font-size: 0.95rem;">
+            Chúng tôi định nghĩa lại hiệu suất bơm bằng công nghệ và cam kết chất lượng dịch vụ đỉnh cao.
+        </p>
+        <div class="row g-4 mt-2">
+            <!-- Feature 1 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card hover-up h-100 p-4 border-0 text-start shadow-sm" style="border-radius: 20px;">
+                    <div class="bg-primary-light text-primary rounded-3 p-3 mb-4 d-inline-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 12px !important;">
+                        <i class="bi bi-lightning-charge-fill fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-main mb-3" style="font-size: 1.05rem;">Hiệu Suất Cột Áp Lớn</h5>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">
+                        Thiết kế buồng cánh tối ưu tăng lưu lượng nước lên 25% với cùng một mức tiêu thụ động cơ.
+                    </p>
                 </div>
-                <div class="p-4">
-                    <!-- Brand Checkboxes -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted">THƯƠNG HIỆU</label>
-                        <div class="brand-list custom-scrollbar pe-2" style="max-height: 200px; overflow-y: auto;">
-                            <div class="form-check custom-check mb-2" ng-repeat="b in allBrands">
-                                <input class="form-check-input" type="checkbox" id="brand-{{$index}}" 
-                                       ng-checked="filterData.brands.indexOf(b) > -1"
-                                       ng-click="toggleBrand(b)">
-                                <label class="form-check-label small cursor-pointer text-main" for="brand-{{$index}}">
-                                    {{b}}
-                                </label>
+            </div>
+            <!-- Feature 2 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card hover-up h-100 p-4 border-0 text-start shadow-sm" style="border-radius: 20px;">
+                    <div class="bg-primary-light text-primary rounded-3 p-3 mb-4 d-inline-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 12px !important;">
+                        <i class="bi bi-plugin fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-main mb-3" style="font-size: 1.05rem;">Tiết Kiệm Điện 30%</h5>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">
+                        Tích hợp động cơ biến tần thông minh (Inverter) tự động điều chỉnh tốc độ theo nhu cầu thực tế.
+                    </p>
+                </div>
+            </div>
+            <!-- Feature 3 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card hover-up h-100 p-4 border-0 text-start shadow-sm" style="border-radius: 20px;">
+                    <div class="bg-primary-light text-primary rounded-3 p-3 mb-4 d-inline-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 12px !important;">
+                        <i class="bi bi-gem fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-main mb-3" style="font-size: 1.05rem;">Vật Liệu Siêu Bền Bỉ</h5>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">
+                        Vỏ gang nguyên khối chịu lực, buồng cánh làm bằng inox 304/316, đồng chống rỉ sét ăn mòn tuyệt đối.
+                    </p>
+                </div>
+            </div>
+            <!-- Feature 4 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="glass-card hover-up h-100 p-4 border-0 text-start shadow-sm" style="border-radius: 20px;">
+                    <div class="bg-primary-light text-primary rounded-3 p-3 mb-4 d-inline-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 12px !important;">
+                        <i class="bi bi-clock-history fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-main mb-3" style="font-size: 1.05rem;">Hỗ Trợ Kỹ Thuật 24/7</h5>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">
+                        Kỹ sư chuyên nghiệp khảo sát hệ thống, lắp đặt và hỗ trợ khắc phục sự cố tận nơi nhanh chóng.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. KEY DYNAMIC CATEGORIES PREVIEW -->
+    <div class="glass-card border-0 shadow-sm p-5 mb-5 text-start" style="border-radius: 24px; background: var(--card-bg);">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-8">
+                <h3 class="fw-bold text-main mb-1">Danh Mục Máy Bơm Nổi Bật</h3>
+                <p class="text-muted mb-0 small">Lựa chọn giải pháp phù hợp với quy mô công trình và nhu cầu của bạn</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="#!/products" class="btn btn-primary rounded-pill px-4 py-2 small fw-bold">Xem tất cả danh mục <i class="bi bi-chevron-right small"></i></a>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-3 col-sm-6" ng-repeat="cat in categories" ng-click="goToCategory(cat.id)" style="cursor: pointer;">
+                <div class="p-4 bg-light-custom rounded-4 hover-up border text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                    <div class="bg-white rounded-circle p-3 shadow-sm mb-3 d-flex align-items-center justify-content-center text-primary" style="width: 60px; height: 60px;">
+                        <i class="bi bi-droplet-half fs-3"></i>
+                    </div>
+                    <h6 class="fw-bold text-main mb-1 text-center">{{cat.name}}</h6>
+                    <span class="text-muted small" style="font-size: 0.75rem;">Xem chi tiết & lọc sản phẩm</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. FEATURED / HOT PRODUCTS SHOWCASE -->
+    <div class="text-center mb-5 py-3">
+        <h6 class="text-primary fw-bold text-uppercase mb-2 tracking-widest" style="font-size: 0.8rem;">BỘ SƯU TẬP KHUYÊN DÙNG</h6>
+        <h2 class="fw-bold text-main mb-3">Sản Phẩm Nổi Bật & Bán Chạy</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px; font-size: 0.95rem;">
+            Tuyển chọn những dòng thiết bị bơm có doanh số dẫn đầu và nhận phản hồi tích cực nhất từ khách hàng.
+        </p>
+
+        <!-- Dynamic Featured Products grid -->
+        <div class="row g-4 mt-3">
+            <div class="col-lg-3 col-md-6" ng-repeat="p in featuredProducts">
+                <div class="glass-card glass-card-hover h-100 border-0 shadow-sm d-flex flex-column overflow-hidden" style="border-radius: 16px;">
+                    <div class="position-relative p-3 bg-light-custom text-center" style="cursor: pointer; height: 190px;" ng-click="goToDetail(p.id)">
+                        <img ng-src="{{p.image}}" class="w-100 h-100 object-fit-contain" alt="{{p.name}}">
+                        <div class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-primary rounded-pill px-2 py-1 small">{{p.brand}}</span>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-2 d-flex flex-column flex-grow-1 text-start">
+                        <h5 class="product-title mb-2" style="font-size: 0.9rem; font-weight: 600; line-height: 1.5; min-height: 2.7rem;">
+                            {{p.name}}
+                        </h5>
+                        <div class="d-flex align-items-end justify-content-between mt-auto pt-3 border-top">
+                            <div>
+                                <div class="small text-muted mb-1" style="font-size: 0.7rem;">Giá chính hãng</div>
+                                <div class="fw-bold fs-6 text-primary">{{p.price | number}}đ</div>
+                            </div>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-outline-danger rounded-circle p-2 d-flex align-items-center justify-content-center hover-up" 
+                                        ng-click="addToWishlist(p)" style="width: 36px; height: 36px;" title="Yêu thích">
+                                    <i class="bi bi-heart fs-6"></i>
+                                </button>
+                                <button class="btn btn-primary rounded-circle p-2 d-flex align-items-center justify-content-center hover-up" 
+                                        ng-click="addToCart(p)" style="width: 36px; height: 36px;" title="Thêm vào giỏ">
+                                    <i class="bi bi-cart-plus fs-6"></i>
+                                </button>
+                                <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center border hover-up" 
+                                        ng-click="goToDetail(p.id)" style="width: 36px; height: 36px;" title="Chi tiết">
+                                    <i class="bi bi-eye fs-6"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Power Range -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted">CÔNG SUẤT (KW)</label>
-                        <div class="d-flex align-items-center gap-2 mb-3">
-                            <input type="number" class="form-control form-control-sm text-center" 
-                                   ng-model="filterData.minPower" placeholder="Min" ng-change="search()"/>
-                            <span class="text-muted small">─</span>
-                            <input type="number" class="form-control form-control-sm text-center" 
-                                   ng-model="filterData.maxPower" placeholder="Max" ng-change="search()"/>
-                        </div>
-                        <input type="range" class="form-range custom-range" min="0" max="100" step="0.5" 
-                               ng-model="filterData.maxPower" ng-change="search()">
-                    </div>
-
-                    <button class="btn btn-primary w-100 rounded-pill btn-sm py-2" ng-click="resetFilter()">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i> Làm mới bộ lọc
-                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Product List -->
-        <div class="col-md-9">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold mb-0">Danh sách sản phẩm</h4>
-                <div class="badge bg-light-custom text-main border p-2 px-3 rounded-pill fw-normal">
-                    <span class="text-primary fw-bold">{{pager.items.length}}</span> sản phẩm được tìm thấy
-                </div>
-            </div>
+        <a href="#!/products" class="btn btn-outline-primary rounded-pill px-5 py-3 fw-bold mt-5 hover-up">
+            XEM TẤT CẢ SẢN PHẨM <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
 
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4" ng-repeat="p in pager.items">
-                    <div class="glass-card glass-card-hover h-100 border-0 shadow-sm d-flex flex-column overflow-hidden">
-                        <div class="position-relative p-3 bg-light-custom text-center" style="cursor: pointer; height: 220px;" ng-click="goToDetail(p.id)">
-                            <img ng-src="{{p.image}}" class="w-100 h-100 object-fit-contain" alt="{{p.name}}">
-                            <div class="position-absolute top-0 start-0 m-2">
-                                <span class="badge bg-primary rounded-pill px-2 py-1 small">{{p.brand}}</span>
-                            </div>
+    <!-- 6. CUSTOMER TESTIMONIALS SECTION -->
+    <div class="glass-card border-0 shadow-sm p-5 mb-5 text-start" style="border-radius: 24px; background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);">
+        <div class="text-center mb-5">
+            <h6 class="text-primary fw-bold text-uppercase mb-2 tracking-widest" style="font-size: 0.8rem;">ĐÁNH GIÁ THỰC TẾ</h6>
+            <h3 class="fw-bold text-main mb-0">Khách Hàng Nói Gì Về Pump Shop?</h3>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="bg-white rounded-4 p-4 border shadow-sm h-100 d-flex flex-column" style="background: var(--card-bg) !important;">
+                    <div class="d-flex text-warning gap-1 mb-3">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="text-muted small flex-grow-1" style="line-height: 1.6;">
+                        "Tôi đã lắp đặt hệ thống máy bơm Lepono 3HP cho khu trang trại của mình. Hiệu suất cực kỳ ấn tượng, máy chạy êm và đặc biệt là hóa đơn tiền điện giảm đáng kể so với dòng bơm cũ."
+                    </p>
+                    <hr class="my-3 opacity-25">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary text-white rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; font-size: 0.9rem;">
+                            T
                         </div>
-                        <div class="p-4 pt-2 d-flex flex-column flex-grow-1">
-                            <h5 class="product-title mb-2" style="font-size: 0.95rem; font-weight: 600; line-height: 1.5; min-height: 2.8rem;">
-                                {{p.name}}
-                            </h5>
-                            <div class="d-flex align-items-end justify-content-between mt-auto pt-3 border-top">
-                                <div>
-                                    <div class="small text-muted mb-1" style="font-size: 0.75rem;">Giá bán</div>
-                                    <div class="fw-bold fs-5 text-primary">{{p.price | number}}đ</div>
-                                </div>
-                                <div class="d-flex gap-1">
-                                    <button class="btn btn-primary rounded-circle p-2 d-flex align-items-center justify-content-center" 
-                                            ng-click="addToCart(p)" style="width: 42px; height: 42px;" title="Thêm vào giỏ">
-                                        <i class="bi bi-cart-plus fs-5"></i>
-                                    </button>
-                                    <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center border" 
-                                            ng-click="goToDetail(p.id)" style="width: 42px; height: 42px;" title="Chi tiết">
-                                        <i class="bi bi-eye fs-5"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        <div>
+                            <div class="fw-bold text-main small">Nguyễn Văn Thành</div>
+                            <div class="x-small text-muted">Chủ trang trại nông nghiệp sạch Lâm Đồng</div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center mt-4 mb-5" ng-if="pager.count > 0">
-                <nav>
-                    <ul class="pagination pagination-md">
-                        <li class="page-item" ng-class="{disabled: pager.page == 0}">
-                            <a class="page-link shadow-sm mx-1 rounded-circle" ng-click="pager.first()"><i class="bi bi-chevron-double-left"></i></a>
-                        </li>
-                        <li class="page-item" ng-class="{disabled: pager.page == 0}">
-                            <a class="page-link shadow-sm mx-1 rounded-circle" ng-click="pager.prev()"><i class="bi bi-chevron-left"></i></a>
-                        </li>
-                        
-                        <li class="page-item active mx-1">
-                            <span class="page-link rounded-circle">{{pager.page + 1}}</span>
-                        </li>
-
-                        <li class="page-item" ng-class="{disabled: pager.page >= pager.count - 1}">
-                            <a class="page-link shadow-sm mx-1 rounded-circle" ng-click="pager.next()"><i class="bi bi-chevron-right"></i></a>
-                        </li>
-                        <li class="page-item" ng-class="{disabled: pager.page >= pager.count - 1}">
-                            <a class="page-link shadow-sm mx-1 rounded-circle" ng-click="pager.last()"><i class="bi bi-chevron-double-right"></i></a>
-                        </li>
-                    </ul>
-                </nav>
+            <div class="col-md-4">
+                <div class="bg-white rounded-4 p-4 border shadow-sm h-100 d-flex flex-column" style="background: var(--card-bg) !important;">
+                    <div class="d-flex text-warning gap-1 mb-3">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="text-muted small flex-grow-1" style="line-height: 1.6;">
+                        "Với tư cách là nhà thầu cơ điện, tôi luôn tìm kiếm những đối tác uy tín cung cấp đầy đủ giấy tờ CO/CQ. Pump Shop không chỉ cung cấp hàng chính hãng mà đội ngũ kỹ thuật của họ cực kỳ am hiểu nghiệp vụ."
+                    </p>
+                    <hr class="my-3 opacity-25">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-success text-white rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; font-size: 0.9rem;">
+                            H
+                        </div>
+                        <div>
+                            <div class="fw-bold text-main small">Phạm Minh Hoàng</div>
+                            <div class="x-small text-muted">Giám đốc Kỹ thuật Công ty Cơ điện M&E</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="text-center py-5" ng-if="pager.items.length == 0">
-                <i class="bi bi-search text-muted opacity-25" style="font-size: 4rem;"></i>
-                <h4 class="mt-3 text-muted">Không tìm thấy sản phẩm nào phù hợp</h4>
+            <div class="col-md-4">
+                <div class="bg-white rounded-4 p-4 border shadow-sm h-100 d-flex flex-column" style="background: var(--card-bg) !important;">
+                    <div class="d-flex text-warning gap-1 mb-3">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="text-muted small flex-grow-1" style="line-height: 1.6;">
+                        "Hệ thống bơm tăng áp gia đình Hitachi do Pump Shop tư vấn vận hành vô cùng thông minh. Áp lực nước tại các tầng cao đều rất khỏe và ổn định. Dịch vụ chăm sóc khách hàng cực kỳ nhiệt tình."
+                    </p>
+                    <hr class="my-3 opacity-25">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-warning text-white rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; font-size: 0.9rem;">
+                            K
+                        </div>
+                        <div>
+                            <div class="fw-bold text-main small">Trần Thị Kim Anh</div>
+                            <div class="x-small text-muted">Cư dân Vinhomes Ocean Park</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. CONSULTATION & CONTACT FORM SECTION -->
+    <div id="consultation-section" class="glass-card border-0 shadow-lg p-5 mb-5 text-start" style="border-radius: 24px; background: var(--card-bg);">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h6 class="text-primary fw-bold text-uppercase mb-2 tracking-widest" style="font-size: 0.8rem;">TƯ VẤN MIỄN PHÍ</h6>
+                <h3 class="fw-bold text-main mb-3">Đăng Ký Khảo Sát & Tư Vấn Kỹ Thuật Tận Nơi</h3>
+                <p class="text-muted mb-4" style="line-height: 1.65;">
+                    Bạn đang băn khoăn lựa chọn dòng công suất phù hợp? Hoặc gặp khó khăn trong việc thiết kế hệ thống đường ống nước phức tạp? 
+                </p>
+                <p class="text-muted mb-4" style="line-height: 1.65;">
+                    Hãy để lại thông tin, đội ngũ kỹ sư của Pump Shop sẽ liên hệ tư vấn khảo sát thực tế hoàn toàn miễn phí trong vòng 15 phút!
+                </p>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary text-white rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                        <i class="bi bi-telephone-fill"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted mb-0">Hotline hỗ trợ kỹ thuật 24/7</div>
+                        <div class="fw-bold text-primary fs-5">1900 6789 (Hỗ trợ 24/7)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 ps-lg-5">
+                <form ng-submit="submitConsultation()" class="p-4 bg-light-custom rounded-4 border">
+                    <div class="mb-3">
+                        <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person text-muted"></i></span>
+                            <input type="text" class="form-control" ng-model="consultationForm.name" placeholder="Ví dụ: Nguyễn Văn A" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại liên hệ <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-phone text-muted"></i></span>
+                            <input type="tel" class="form-control" ng-model="consultationForm.phone" placeholder="Ví dụ: 0987654321" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nhu cầu tư vấn hoặc loại máy bơm quan tâm</label>
+                        <textarea class="form-control" ng-model="consultationForm.message" rows="3" placeholder="Ví dụ: Tư vấn máy bơm gia đình 3 tầng, máy bơm công nghiệp..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2.5 fw-bold hover-up">
+                        GỬI YÊU CẦU TƯ VẤN <i class="bi bi-send ms-1"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

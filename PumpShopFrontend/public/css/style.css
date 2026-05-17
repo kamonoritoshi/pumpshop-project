@@ -106,6 +106,43 @@ body {
     max-width: 600px;
 }
 
+.search-bar-wrapper .input-group {
+    background-color: var(--bg-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 2px;
+    transition: all 0.3s ease;
+}
+
+.search-bar-wrapper .input-group:hover {
+    border-color: var(--primary) !important;
+    background-color: var(--card-bg) !important;
+}
+
+.search-bar-wrapper .input-group:focus-within {
+    background-color: var(--card-bg) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+}
+
+.search-bar-wrapper .form-control {
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--text-main) !important;
+    font-size: 0.95rem;
+}
+
+.search-bar-wrapper .form-control::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.7;
+}
+
+.search-bar-wrapper .input-group-text {
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--text-muted) !important;
+}
+
 .nav-link {
     color: var(--text-muted) !important;
     font-weight: 500;
@@ -189,32 +226,93 @@ h1, h2, h3, h4, h5 {
     color: #fff;
 }
 
-/* Form Styles */
+/* Form Styles & Inputs */
 .form-label {
     font-weight: 600;
     color: var(--text-main);
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
+    transition: color 0.2s ease;
 }
 
+/* Global Form Controls & Theme Adapters */
+.form-control, 
+.form-select,
 .glass-input {
-    background: var(--card-bg) !important;
+    background-color: var(--card-bg) !important;
     border: 1px solid var(--border-color) !important;
     color: var(--text-main) !important;
-    border-radius: 10px;
+    border-radius: 10px !important;
     padding: 0.75rem 1rem;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease-in-out;
 }
 
+.form-control:focus, 
+.form-select:focus,
 .glass-input:focus {
+    background-color: var(--card-bg) !important;
     border-color: var(--primary) !important;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+    color: var(--text-main) !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
     outline: none;
 }
 
+.form-control::placeholder,
 .glass-input::placeholder {
-    color: var(--text-muted);
-    font-weight: 400;
+    color: var(--text-muted) !important;
+    opacity: 0.6;
+}
+
+/* Disabled & Readonly states */
+.form-control:disabled, 
+.form-control[readonly],
+.glass-input:disabled,
+.glass-input[readonly] {
+    background-color: var(--bg-color) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
+    opacity: 0.8;
+}
+
+/* Premium Unified Input Groups */
+.input-group {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.input-group:focus-within {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+}
+
+.input-group .form-control {
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--text-main) !important;
+    box-shadow: none !important;
+}
+
+.input-group .input-group-text {
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--text-muted) !important;
+    font-size: 1.1rem;
+    padding-right: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.input-group .input-group-text i {
+    color: var(--text-muted) !important;
+}
+
+.input-group:hover {
+    border-color: var(--primary-hover) !important;
 }
 
 /* Tables */
@@ -453,6 +551,24 @@ h1, h2, h3, h4, h5 {
 .custom-check .form-check-input:checked {
     background-color: var(--primary);
     border-color: var(--primary);
+}
+
+/* Beautiful Checkboxes globally */
+.form-check-input {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+    border-color: var(--primary) !important;
 }
 
 /* Avatar */
